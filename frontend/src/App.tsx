@@ -4,10 +4,11 @@ import React, {
 import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
-import { ChakraProvider } from '@chakra-ui/react';
+import { Grid, GridItem, ChakraProvider } from '@chakra-ui/react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import WorldMap from './components/world/WorldMap';
+import TownMaps from './components/townMaps/TownMaps';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
 import { CoveyAppState, NearbyPlayers } from './CoveyTypes';
 import VideoContext from './contexts/VideoContext';
@@ -25,6 +26,7 @@ import { Callback } from './components/VideoCall/VideoFrontend/types';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
+import TownMapInfo from './classes/TownMapInfo';
 
 type CoveyAppUpdate =
   | { action: 'doConnect'; data: { userName: string, townFriendlyName: string, townID: string,townIsPubliclyListed:boolean, sessionToken: string, myPlayerID: string, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
@@ -49,6 +51,7 @@ function defaultAppState(): CoveyAppState {
     currentLocation: {
       x: 0, y: 0, rotation: 'front', moving: false,
     },
+    townMapInfo: new TownMapInfo(),
     emitMovement: () => {
     },
     apiClient: new TownsServiceClient(),
@@ -66,6 +69,7 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     nearbyPlayers: state.nearbyPlayers,
     userName: state.userName,
     socket: state.socket,
+    townMapInfo: state.townMapInfo,
     emitMovement: state.emitMovement,
     apiClient: state.apiClient,
   };
@@ -223,10 +227,16 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       return <div>Loading...</div>;
     }
     return (
-      <div>
-        <WorldMap />
-        <VideoOverlay preferredMode="fullwidth" />
-      </div>
+<div>
+<div>
+<WorldMap />
+</div>
+
+<VideoOverlay preferredMode="fullwidth" />
+
+</div>
+
+
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
   return (

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Grid, GridItem, ChakraProvider } from '@chakra-ui/react';
 import Phaser from 'phaser';
 import Player, { UserLocation } from '../../classes/Player';
 import Video from '../../classes/Video/Video';
+import TownMapInfo from '../../classes/TownMapInfo';
+import TownMaps from '../townMaps/TownMaps';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
+
 
 // https://medium.com/@michaelwesthadley/modular-game-worlds-in-phaser-3-tilemaps-1-958fc7e6bbd6
 class CoveyGameScene extends Phaser.Scene {
@@ -33,17 +37,20 @@ class CoveyGameScene extends Phaser.Scene {
 
   private emitMovement: (loc: UserLocation) => void;
 
-  constructor(video: Video, emitMovement: (loc: UserLocation) => void) {
+  private townMapInfo: TownMapInfo;
+
+  constructor(video: Video, emitMovement: (loc: UserLocation) => void, townMapInfo: TownMapInfo) {
     super('PlayGame');
     this.video = video;
     this.emitMovement = emitMovement;
+    this.townMapInfo = townMapInfo;
   }
 
   preload() {
     // this.load.image("logo", logoImg);
-    this.load.image('tiles', '/assets/tilesets/tuxmon-sample-32px-extruded.png');
-    this.load.tilemapTiledJSON('map', '/assets/tilemaps/tuxemon-town.json');
-    this.load.atlas('atlas', '/assets/atlas/atlas.png', '/assets/atlas/atlas.json');
+    this.load.image('tiles', this.townMapInfo.loadImage);
+    this.load.tilemapTiledJSON('map', this.townMapInfo.tilemapTiledJson);
+    this.load.atlas('atlas', this.townMapInfo.atlaspng, this.townMapInfo.atlasjson);
   }
 
   updatePlayersLocations(players: Player[]) {
@@ -189,7 +196,8 @@ class CoveyGameScene extends Phaser.Scene {
       this.player.label.setY(body.y - 20);
       if (!this.lastLocation
         || this.lastLocation.x !== body.x
-        || this.lastLocation.y !== body.y || this.lastLocation.rotation !== primaryDirection
+        || this.lastLocation.y !== body.y
+        || (isMoving && this.lastLocation.rotation !== primaryDirection)
         || this.lastLocation.moving !== isMoving) {
         if (!this.lastLocation) {
           this.lastLocation = {
@@ -445,10 +453,11 @@ export default function WorldMap(): JSX.Element {
         },
       },
     };
+    const townMapInfo = new TownMapInfo();
 
     const game = new Phaser.Game(config);
     if (video) {
-      const newGameScene = new CoveyGameScene(video, emitMovement);
+      const newGameScene = new CoveyGameScene(video, emitMovement,townMapInfo);
       setGameScene(newGameScene);
       game.scene.add('coveyBoard', newGameScene, true);
       video.pauseGame = () => {
@@ -468,5 +477,8 @@ export default function WorldMap(): JSX.Element {
     gameScene?.updatePlayersLocations(players);
   }, [players, deepPlayers, gameScene]);
 
-  return <div id="map-container"/>;
+  return <Grid templateColumns="repeat(2, 1fr)">         <div id="map-container"/>
+  <TownMaps /></Grid>;
+ 
+
 }
