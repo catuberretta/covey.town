@@ -26,7 +26,6 @@ import { Callback } from './components/VideoCall/VideoFrontend/types';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
-import TownMapInfo from './classes/TownMapInfo';
 
 type CoveyAppUpdate =
   | { action: 'doConnect'; data: { userName: string, townFriendlyName: string, townID: string,townIsPubliclyListed:boolean, sessionToken: string, myPlayerID: string, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
@@ -51,7 +50,6 @@ function defaultAppState(): CoveyAppState {
     currentLocation: {
       x: 0, y: 0, rotation: 'front', moving: false,
     },
-    townMapInfo: new TownMapInfo(),
     emitMovement: () => {
     },
     apiClient: new TownsServiceClient(),
@@ -69,7 +67,6 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     nearbyPlayers: state.nearbyPlayers,
     userName: state.userName,
     socket: state.socket,
-    townMapInfo: state.townMapInfo,
     emitMovement: state.emitMovement,
     apiClient: state.apiClient,
   };
