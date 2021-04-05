@@ -3,17 +3,12 @@ export default class TownMapInfo {
     
     private _mapID: string;
 
-//Everything you need for town map
     private _loadImage: string;
 
-    //Everything you need for town map
     private _tilemapTiledJSON: string;
 
-
-    // Sprite image
     private _atlaspng: string;
 
-    // Sprite json
     private _atlasjson: string;
 
     constructor() {
@@ -40,12 +35,12 @@ export default class TownMapInfo {
         return this._atlasjson;
     }
 
-    get mapID(): string | undefined {
+    get mapID(): string {
         return this._mapID;
     }
 
-    set mapID(newID: string | undefined) {
-        this._mapID === newID;
+    set mapID(newID: string) {
+        this._mapID = newID;
     }
 
 

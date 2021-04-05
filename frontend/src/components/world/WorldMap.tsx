@@ -477,7 +477,8 @@ export default function WorldMap(): JSX.Element {
     gameScene?.updatePlayersLocations(players);
   }, [players, deepPlayers, gameScene]);
 
-  return <Grid templateColumns="repeat(2, 1fr)">         <div id="map-container"/>
+  return <Grid templateColumns="repeat(2, 1fr)">         
+  <div id="map-container"/>
   <TownMaps /></Grid>;
  
 
