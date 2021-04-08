@@ -1,22 +1,18 @@
+import { nanoid } from 'nanoid';
+
 
 export default class TownMapInfo {
     
-    private _mapID: string;
+    private _mapName: string;
 
     private _loadImage: string;
 
     private _tilemapTiledJSON: string;
 
-    private _atlaspng: string;
-
-    private _atlasjson: string;
-
-    constructor() {
-        this._mapID = "lol";
-        this._loadImage  = '/assets/tilesets/tuxmon-sample-32px-extruded.png';
-        this._tilemapTiledJSON = '/assets/tilemaps/tuxemon-town.json';
-        this._atlaspng = '/assets/atlas/atlas.png';
-        this._atlasjson = '/assets/atlas/atlas.json';
+    constructor(mapName: string, loadImg: string, mapJSON: string) {
+        this._mapName = mapName;
+        this._loadImage  = loadImg;
+        this._tilemapTiledJSON = mapJSON;
       }
 
     get loadImage(): string | undefined {
@@ -27,20 +23,12 @@ export default class TownMapInfo {
         return this._tilemapTiledJSON;
     }
 
-    get atlaspng(): string | undefined {
-        return this._atlaspng;
+    get mapName(): string {
+        return this._mapName;
     }
 
-    get atlasjson(): string | undefined {
-        return this._atlasjson;
-    }
-
-    get mapID(): string {
-        return this._mapID;
-    }
-
-    set mapID(newID: string) {
-        this._mapID = newID;
+    set mapName(newID: string) {
+        this._mapName = newID;
     }
 
 
