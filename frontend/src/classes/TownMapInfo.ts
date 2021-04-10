@@ -19,7 +19,8 @@ export default class TownMapInfo {
     constructor() {
         this._mapID = "lol";
         this._loadImage  = '/assets/tilesets/tuxmon-sample-32px-extruded.png';
-        this._tilemapTiledJSON = '/assets/tilemaps/tuxemon-town.json';
+        // this._tilemapTiledJSON = '/assets/tilemaps/tuxemon-town.json';
+        this._tilemapTiledJSON = '/LocalStorage/default_map1.tmx';
         this._atlaspng = '/assets/atlas/atlas.png';
         this._atlasjson = '/assets/atlas/atlas.json';
       }
