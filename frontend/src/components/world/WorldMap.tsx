@@ -50,7 +50,7 @@ class CoveyGameScene extends Phaser.Scene {
     // this.load.image("logo", logoImg);
     this.load.image('tiles', this.townMapInfo.loadImage);
     this.load.tilemapTiledJSON('map', this.townMapInfo.tilemapTiledJson);
-    this.load.atlas('atlas', this.townMapInfo.atlaspng, this.townMapInfo.atlasjson);
+    this.load.atlas('atlas', '/assets/atlas/atlas.png', '/assets/atlas/atlas.json');
   }
 
   updatePlayersLocations(players: Player[]) {
@@ -435,6 +435,12 @@ class CoveyGameScene extends Phaser.Scene {
 }
 
 export default function WorldMap(): JSX.Element {
+
+  const defaultMap = new TownMapInfo('sample town', '/assets/tilesets/tuxmon-sample-32px-extruded.png','/assets/tilemaps/tuxemon-town.json');
+
+  // This is the map that won't work
+  // const defaultMap = new TownMapInfo('Desert Town', '/assets/tilesets/tuxmon-sample-32px-extruded.png', '/assets/tilemaps/tuxemon-town3.json');
+
   const video = Video.instance();
   const {
     emitMovement, players,
@@ -453,11 +459,10 @@ export default function WorldMap(): JSX.Element {
         },
       },
     };
-    const townMapInfo = new TownMapInfo();
 
     const game = new Phaser.Game(config);
     if (video) {
-      const newGameScene = new CoveyGameScene(video, emitMovement,townMapInfo);
+      const newGameScene = new CoveyGameScene(video, emitMovement, defaultMap);
       setGameScene(newGameScene);
       game.scene.add('coveyBoard', newGameScene, true);
       video.pauseGame = () => {
@@ -477,7 +482,8 @@ export default function WorldMap(): JSX.Element {
     gameScene?.updatePlayersLocations(players);
   }, [players, deepPlayers, gameScene]);
 
-  return <Grid templateColumns="repeat(2, 1fr)">         <div id="map-container"/>
+  return <Grid templateColumns="repeat(2, 1fr)">         
+  <div id="map-container"/>
   <TownMaps /></Grid>;
  
 

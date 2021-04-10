@@ -1,14 +1,15 @@
+import { nanoid } from 'nanoid';
+
 
 export default class TownMapInfo {
     
-    private _mapID: string;
+    private _mapName: string;
 
-//Everything you need for town map
     private _loadImage: string;
 
-    //Everything you need for town map
     private _tilemapTiledJSON: string;
 
+<<<<<<< HEAD
 
     // Sprite image
     private _atlaspng: string;
@@ -23,6 +24,12 @@ export default class TownMapInfo {
         this._tilemapTiledJSON = '/LocalStorage/default_map1.tmx';
         this._atlaspng = '/assets/atlas/atlas.png';
         this._atlasjson = '/assets/atlas/atlas.json';
+=======
+    constructor(mapName: string, loadImg: string, mapJSON: string) {
+        this._mapName = mapName;
+        this._loadImage  = loadImg;
+        this._tilemapTiledJSON = mapJSON;
+>>>>>>> 8d90cba6759391281c1491632fdb8e3cd4a63ab3
       }
 
     get loadImage(): string | undefined {
@@ -33,20 +40,12 @@ export default class TownMapInfo {
         return this._tilemapTiledJSON;
     }
 
-    get atlaspng(): string | undefined {
-        return this._atlaspng;
+    get mapName(): string {
+        return this._mapName;
     }
 
-    get atlasjson(): string | undefined {
-        return this._atlasjson;
-    }
-
-    get mapID(): string | undefined {
-        return this._mapID;
-    }
-
-    set mapID(newID: string | undefined) {
-        this._mapID === newID;
+    set mapName(newID: string) {
+        this._mapName = newID;
     }
 
 

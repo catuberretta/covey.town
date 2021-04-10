@@ -1,7 +1,6 @@
 import { Socket } from 'socket.io-client';
 import Player, { UserLocation } from './classes/Player';
 import TownsServiceClient from './classes/TownsServiceClient';
-import TownMapInfo from './classes/TownMapInfo';
 
 export type CoveyEvent = 'playerMoved' | 'playerAdded' | 'playerRemoved';
 
@@ -27,7 +26,6 @@ export type CoveyAppState = {
   currentLocation: UserLocation,
   nearbyPlayers: NearbyPlayers,
   emitMovement: (location: UserLocation) => void,
-  townMapInfo: TownMapInfo,
   socket: Socket | null,
   apiClient: TownsServiceClient,
 };
