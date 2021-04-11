@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Grid, GridItem, ChakraProvider } from '@chakra-ui/react';
 import Phaser from 'phaser';
 import Player, { UserLocation } from '../../classes/Player';
+import { CoveyTownMapInfo } from '../../classes/Town';
 import Video from '../../classes/Video/Video';
-import TownMapInfo from '../../classes/TownMapInfo';
 import TownMaps from '../townMaps/TownMaps';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 
@@ -37,9 +37,9 @@ class CoveyGameScene extends Phaser.Scene {
 
   private emitMovement: (loc: UserLocation) => void;
 
-  private townMapInfo: TownMapInfo;
+  private townMapInfo: CoveyTownMapInfo;
 
-  constructor(video: Video, emitMovement: (loc: UserLocation) => void, townMapInfo: TownMapInfo) {
+  constructor(video: Video, emitMovement: (loc: UserLocation) => void, townMapInfo: CoveyTownMapInfo) {
     super('PlayGame');
     this.video = video;
     this.emitMovement = emitMovement;
@@ -48,8 +48,8 @@ class CoveyGameScene extends Phaser.Scene {
 
   preload() {
     // this.load.image("logo", logoImg);
-    this.load.image('tiles', this.townMapInfo.loadImage);
-    this.load.tilemapTiledJSON('map', this.townMapInfo.tilemapTiledJson);
+    this.load.image('tiles', `/assets/tilesets/${this.townMapInfo.loadImg}`);
+    this.load.tilemapTiledJSON('map', `/assets/tilemaps/${this.townMapInfo.mapJSON}`);
     this.load.atlas('atlas', '/assets/atlas/atlas.png', '/assets/atlas/atlas.json');
   }
 
@@ -434,9 +434,13 @@ class CoveyGameScene extends Phaser.Scene {
   }
 }
 
-export default function WorldMap(): JSX.Element {
+interface TownInfoProps {
+  townMap: CoveyTownMapInfo;
+}
 
-  const defaultMap = new TownMapInfo('sample town', '/assets/tilesets/tuxmon-sample-32px-extruded.png','/assets/tilemaps/tuxemon-town.json');
+export default function WorldMap(props: TownInfoProps): JSX.Element {
+
+  // const defaultMap = new TownMapInfo('Tuxedo Town', 'tuxmon-sample-32px-extruded.png','rose-town.json');
 
   // This is the map that won't work
   // const defaultMap = new TownMapInfo('Desert Town', '/assets/tilesets/tuxmon-sample-32px-extruded.png', '/assets/tilemaps/tuxemon-town3.json');
@@ -462,7 +466,7 @@ export default function WorldMap(): JSX.Element {
 
     const game = new Phaser.Game(config);
     if (video) {
-      const newGameScene = new CoveyGameScene(video, emitMovement, defaultMap);
+      const newGameScene = new CoveyGameScene(video, emitMovement, props.townMap);
       setGameScene(newGameScene);
       game.scene.add('coveyBoard', newGameScene, true);
       video.pauseGame = () => {

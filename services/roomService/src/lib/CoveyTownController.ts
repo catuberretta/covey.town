@@ -1,5 +1,5 @@
 import { customAlphabet, nanoid } from 'nanoid';
-import { UserLocation } from '../CoveyTypes';
+import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
 import CoveyTownListener from '../types/CoveyTownListener';
 import Player from '../types/Player';
 import PlayerSession from '../types/PlayerSession';
@@ -50,6 +50,14 @@ export default class CoveyTownController {
     return this._coveyTownID;
   }
 
+  set coveyTownMap(value: CoveyTownMapInfo) {
+    this._townMap = value;
+  }
+
+  get coveyTownMap(): CoveyTownMapInfo {
+    return this._townMap;
+  }
+
   /** The list of players currently in the town * */
   private _players: Player[] = [];
 
@@ -70,6 +78,8 @@ export default class CoveyTownController {
 
   private _isPubliclyListed: boolean;
 
+  private _townMap: CoveyTownMapInfo;
+
   private _capacity: number;
 
   constructor(friendlyName: string, isPubliclyListed: boolean) {
@@ -78,6 +88,7 @@ export default class CoveyTownController {
     this._townUpdatePassword = nanoid(24);
     this._isPubliclyListed = isPubliclyListed;
     this._friendlyName = friendlyName;
+    this._townMap = { mapName: 'Tuxedo Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'tuxemon-town.json' };
   }
 
   /**

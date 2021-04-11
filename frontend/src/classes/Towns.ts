@@ -1,5 +1,3 @@
-import { nanoid } from 'nanoid';
-
 
 export default class TownMapInfo {
     
@@ -7,19 +5,27 @@ export default class TownMapInfo {
 
     private _loadImage: string;
 
+    private _loadImageLocation: string;
+
     private _tilemapTiledJSON: string;
+
 
     constructor(mapName: string, loadImg: string, mapJSON: string) {
         this._mapName = mapName;
         this._loadImage  = loadImg;
-        this._tilemapTiledJSON = mapJSON;
+        this._loadImageLocation  = `/assets/tilesets/${loadImg}`;
+        this._tilemapTiledJSON = `/assets/tilemaps/${mapJSON}`;
       }
 
-    get loadImage(): string | undefined {
+    get loadImage(): string  {
         return this._loadImage;
     }
 
-    get tilemapTiledJson(): string | undefined {
+    get loadImageLocation(): string  {
+        return this._loadImageLocation;
+    }
+
+    get tilemapTiledJson(): string  {
         return this._tilemapTiledJSON;
     }
 

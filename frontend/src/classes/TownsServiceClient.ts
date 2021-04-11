@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import assert from 'assert';
 import { ServerPlayer } from './Player';
-
+import { CoveyTownMapInfo } from './Town';
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
  */
@@ -31,6 +31,8 @@ export interface TownJoinResponse {
   friendlyName: string;
   /** Is this a private town? * */
   isPubliclyListed: boolean;
+  /** Map of this town * */
+  currentTownMap: CoveyTownMapInfo;
 }
 
 /**
@@ -74,6 +76,17 @@ export interface TownUpdateRequest {
   coveyTownPassword: string;
   friendlyName?: string;
   isPubliclyListed?: boolean;
+}
+
+/**
+ * Payload sent by the client to update a Town's map
+ * N.B., JavaScript is terrible, so:
+ * if(!isPubliclyListed) -> evaluates to true if the value is false OR undefined, use ===
+ */
+ export interface TownMapUpdateRequest {
+  coveyTownID: string;
+  coveyTownPassword: string;
+  townMap?: CoveyTownMapInfo;
 }
 
 /**
@@ -123,6 +136,11 @@ export default class TownsServiceClient {
   }
 
   async updateTown(requestData: TownUpdateRequest): Promise<void> {
+    const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(`/towns/${requestData.coveyTownID}`, requestData);
+    return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
+  }
+
+  async updateTownMap(requestData: TownMapUpdateRequest): Promise<void> {
     const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(`/towns/${requestData.coveyTownID}`, requestData);
     return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
   }

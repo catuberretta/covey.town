@@ -11,6 +11,7 @@ import WorldMap from './components/world/WorldMap';
 import TownMaps from './components/townMaps/TownMaps';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
 import { CoveyAppState, NearbyPlayers } from './CoveyTypes';
+import { CoveyTownMapInfo } from './classes/Town';
 import VideoContext from './contexts/VideoContext';
 import Login from './components/Login/Login';
 import CoveyAppContext from './contexts/CoveyAppContext';
@@ -26,9 +27,11 @@ import { Callback } from './components/VideoCall/VideoFrontend/types';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
+// import TownMapInfo from './classes/TownMapInfo';
+
 
 type CoveyAppUpdate =
-  | { action: 'doConnect'; data: { userName: string, townFriendlyName: string, townID: string,townIsPubliclyListed:boolean, sessionToken: string, myPlayerID: string, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
+  | { action: 'doConnect'; data: { userName: string, townFriendlyName: string, townID: string,townIsPubliclyListed:boolean, townMap: CoveyTownMapInfo, sessionToken: string, myPlayerID: string, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
   | { action: 'addPlayer'; player: Player }
   | { action: 'playerMoved'; player: Player }
   | { action: 'playerDisconnect'; player: Player }
@@ -44,6 +47,7 @@ function defaultAppState(): CoveyAppState {
     currentTownFriendlyName: '',
     currentTownID: '',
     currentTownIsPubliclyListed: false,
+    currentTownMap: { mapName: '', loadImg: '', mapJSON: '' },
     sessionToken: '',
     userName: '',
     socket: null,
@@ -61,6 +65,7 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     currentTownFriendlyName: state.currentTownFriendlyName,
     currentTownID: state.currentTownID,
     currentTownIsPubliclyListed: state.currentTownIsPubliclyListed,
+    currentTownMap: state.currentTownMap,
     myPlayerID: state.myPlayerID,
     players: state.players,
     currentLocation: state.currentLocation,
@@ -99,6 +104,7 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
       nextState.currentTownFriendlyName = update.data.townFriendlyName;
       nextState.currentTownID = update.data.townID;
       nextState.currentTownIsPubliclyListed = update.data.townIsPubliclyListed;
+      nextState.currentTownMap = update.data.townMap;
       nextState.userName = update.data.userName;
       nextState.emitMovement = update.data.emitMovement;
       nextState.socket = update.data.socket;
@@ -127,7 +133,6 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
       if (samePlayers(nextState.nearbyPlayers, state.nearbyPlayers)) {
         nextState.nearbyPlayers = state.nearbyPlayers;
       }
-
       break;
     case 'playerDisconnect':
       nextState.players = nextState.players.filter((player) => player.id !== update.player.id);
@@ -151,6 +156,8 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
 async function GameController(initData: TownJoinResponse,
   dispatchAppUpdate: (update: CoveyAppUpdate) => void) {
   // Now, set up the game sockets
+
+  console.log("Init data is", initData);
   const gamePlayerID = initData.coveyUserID;
   const sessionToken = initData.coveySessionToken;
   const url = process.env.REACT_APP_TOWNS_SERVICE_URL;
@@ -160,6 +167,8 @@ async function GameController(initData: TownJoinResponse,
   const roomName = video.townFriendlyName;
   assert(roomName);
 
+  const roomMap = initData.currentTownMap;
+console.log("When getting it from initData...",roomMap);
   const socket = io(url, { auth: { token: sessionToken, coveyTownID: video.coveyTownID } });
   socket.on('newPlayer', (player: ServerPlayer) => {
     dispatchAppUpdate({
@@ -192,6 +201,7 @@ async function GameController(initData: TownJoinResponse,
       townID: video.coveyTownID,
       myPlayerID: gamePlayerID,
       townIsPubliclyListed: video.isPubliclyListed,
+      townMap: roomMap,
       emitMovement,
       socket,
       players: initData.currentPlayers.map((sp) => Player.fromServerPlayer(sp)),
@@ -202,8 +212,13 @@ async function GameController(initData: TownJoinResponse,
 
 function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefined>> }) {
   const [appState, dispatchAppUpdate] = useReducer(appStateReducer, defaultAppState());
+  
+  console.log("Town map", appState.currentTownMap);
+
+  // const defaultMap = new TownMapInfo('Tuxemon Town', 'tuxmon-sample-32px-extruded.png','tuxemon-town.json');
 
   const setupGameController = useCallback(async (initData: TownJoinResponse) => {
+    console.log("In set up Game Controller", initData)
     await GameController(initData, dispatchAppUpdate);
     return true;
   }, [dispatchAppUpdate]);
@@ -226,7 +241,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     return (
 <div>
 <div>
-<WorldMap />
+<WorldMap townMap={appState.currentTownMap} />
 </div>
 
 <VideoOverlay preferredMode="fullwidth" />

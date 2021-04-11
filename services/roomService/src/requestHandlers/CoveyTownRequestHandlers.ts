@@ -1,9 +1,10 @@
 import assert from 'assert';
 import { Socket } from 'socket.io';
 import Player from '../types/Player';
-import { CoveyTownList, UserLocation } from '../CoveyTypes';
+import { CoveyTownList, UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
 import CoveyTownListener from '../types/CoveyTownListener';
 import CoveyTownsStore from '../lib/CoveyTownsStore';
+
 
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
@@ -34,6 +35,8 @@ export interface TownJoinResponse {
   friendlyName: string;
   /** Is this a private town? * */
   isPubliclyListed: boolean;
+  /** Map of this town * */
+  currentTownMap: CoveyTownMapInfo;
 }
 
 /**
@@ -118,6 +121,7 @@ export async function townJoinHandler(requestData: TownJoinRequest): Promise<Res
       currentPlayers: coveyTownController.players,
       friendlyName: coveyTownController.friendlyName,
       isPubliclyListed: coveyTownController.isPubliclyListed,
+      currentTownMap: coveyTownController.coveyTownMap,
     },
   };
 }
