@@ -87,6 +87,7 @@ function wrappedTownSelection() {
     currentTownID: '',
     currentTownIsPubliclyListed: false,
     currentTownFriendlyName: '',
+    currentTownMap: { mapName: '', loadImg: '', mapJSON: '' },
     sessionToken: '',
     userName: '',
     socket: null,

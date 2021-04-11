@@ -41,6 +41,7 @@ function wrappedTownSettings() {
     currentTownID: '',
     currentTownFriendlyName: '',
     currentTownIsPubliclyListed: false,
+    currentTownMap: { mapName: '', loadImg: '', mapJSON: '' },
     sessionToken: '',
     userName: '',
     socket: null,
