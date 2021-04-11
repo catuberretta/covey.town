@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, GridItem, ChakraProvider } from '@chakra-ui/react';
+import { Grid } from '@chakra-ui/react';
 import Phaser from 'phaser';
 import Player, { UserLocation } from '../../classes/Player';
 import { CoveyTownMapInfo } from '../../classes/Town';
@@ -449,6 +449,9 @@ export default function WorldMap(props: TownInfoProps): JSX.Element {
   const {
     emitMovement, players,
   } = useCoveyAppState();
+
+  const { townMap } = props;
+
   const [gameScene, setGameScene] = useState<CoveyGameScene>();
   useEffect(() => {
     const config = {
@@ -466,7 +469,7 @@ export default function WorldMap(props: TownInfoProps): JSX.Element {
 
     const game = new Phaser.Game(config);
     if (video) {
-      const newGameScene = new CoveyGameScene(video, emitMovement, props.townMap);
+      const newGameScene = new CoveyGameScene(video, emitMovement, townMap);
       setGameScene(newGameScene);
       game.scene.add('coveyBoard', newGameScene, true);
       video.pauseGame = () => {
@@ -479,7 +482,7 @@ export default function WorldMap(props: TownInfoProps): JSX.Element {
     return () => {
       game.destroy(true);
     };
-  }, [video, emitMovement]);
+  }, [video, emitMovement, townMap]);
 
   const deepPlayers = JSON.stringify(players);
   useEffect(() => {

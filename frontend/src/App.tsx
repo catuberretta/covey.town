@@ -4,11 +4,10 @@ import React, {
 import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
-import { Grid, GridItem, ChakraProvider } from '@chakra-ui/react';
+import {  ChakraProvider } from '@chakra-ui/react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import WorldMap from './components/world/WorldMap';
-import TownMaps from './components/townMaps/TownMaps';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
 import { CoveyAppState, NearbyPlayers } from './CoveyTypes';
 import { CoveyTownMapInfo } from './classes/Town';
@@ -157,7 +156,6 @@ async function GameController(initData: TownJoinResponse,
   dispatchAppUpdate: (update: CoveyAppUpdate) => void) {
   // Now, set up the game sockets
 
-  console.log("Init data is", initData);
   const gamePlayerID = initData.coveyUserID;
   const sessionToken = initData.coveySessionToken;
   const url = process.env.REACT_APP_TOWNS_SERVICE_URL;
@@ -168,7 +166,6 @@ async function GameController(initData: TownJoinResponse,
   assert(roomName);
 
   const roomMap = initData.currentTownMap;
-console.log("When getting it from initData...",roomMap);
   const socket = io(url, { auth: { token: sessionToken, coveyTownID: video.coveyTownID } });
   socket.on('newPlayer', (player: ServerPlayer) => {
     dispatchAppUpdate({
@@ -213,12 +210,9 @@ console.log("When getting it from initData...",roomMap);
 function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefined>> }) {
   const [appState, dispatchAppUpdate] = useReducer(appStateReducer, defaultAppState());
   
-  console.log("Town map", appState.currentTownMap);
-
   // const defaultMap = new TownMapInfo('Tuxemon Town', 'tuxmon-sample-32px-extruded.png','tuxemon-town.json');
 
   const setupGameController = useCallback(async (initData: TownJoinResponse) => {
-    console.log("In set up Game Controller", initData)
     await GameController(initData, dispatchAppUpdate);
     return true;
   }, [dispatchAppUpdate]);
@@ -250,7 +244,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
 
 
     );
-  }, [setupGameController, appState.sessionToken, videoInstance]);
+  }, [setupGameController, appState.sessionToken, appState.currentTownMap, videoInstance]);
   return (
 
     <CoveyAppContext.Provider value={appState}>

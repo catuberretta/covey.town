@@ -2,7 +2,7 @@ import { Box, Text, Link, Table, Tbody, Thead, Td, Tr, Button, useToast,  FormCo
     FormLabel,
     Input,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import { CoveyTownMapInfo } from '../../classes/Town';
 
@@ -14,7 +14,7 @@ export default function TownMaps(): JSX.Element {
     const roseTown = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json' }
 
     const [newMap, setNewMap] = useState(defaultMap);
-    const {apiClient, currentTownID, currentTownMap} = useCoveyAppState();
+    const {apiClient, currentTownID } = useCoveyAppState();
     const [roomUpdatePassword, setRoomUpdatePassword] = useState<string>('');
 
 

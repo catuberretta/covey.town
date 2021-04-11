@@ -6,5 +6,5 @@ export type UserLocation = {
   moving: boolean;
 };
 export type CoveyTownList = { friendlyName: string; coveyTownID: string; currentOccupancy: number; maximumOccupancy: number }[];
-export type CoveyTownMapInfo = { mapName: string, loadImg: string, mapJSON: string }
+export type CoveyTownMapInfo = { mapName: string, loadImg: string, mapJSON: string };
 
