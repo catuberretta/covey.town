@@ -43,7 +43,8 @@ export default class CoveyTownsStore {
     return newTown;
   }
 
-  updateTown(coveyTownID: string, coveyTownPassword: string, friendlyName?: string, makePublic?: boolean): boolean {
+  updateTown(coveyTownID: string, coveyTownPassword: string, friendlyName?: string, makePublic?: boolean, townMap?: CoveyTownMapInfo): boolean {
+
     const existingTown = this.getControllerForTown(coveyTownID);
     if (existingTown && passwordMatches(coveyTownPassword, existingTown.townUpdatePassword)) {
       if (friendlyName !== undefined) {
@@ -55,16 +56,11 @@ export default class CoveyTownsStore {
       if (makePublic !== undefined) {
         existingTown.isPubliclyListed = makePublic;
       }
+      if (townMap !== undefined) {
+        existingTown.coveyTownMap = townMap;
+      }
       return true;
-    }
-    return false;
-  }
 
-  updateTownMap(coveyTownID: string, coveyTownPassword: string, townMap: CoveyTownMapInfo): boolean {
-    const existingTown = this.getControllerForTown(coveyTownID);
-    if (existingTown && passwordMatches(coveyTownPassword, existingTown.townUpdatePassword)) {
-      existingTown.coveyTownMap = townMap;
-      return true;
     }
     return false;
   }

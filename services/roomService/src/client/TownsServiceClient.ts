@@ -1,7 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import assert from 'assert';
-import { UserLocation } from '../CoveyTypes';
-
+import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
 
 export type ServerPlayer = { _id: string, _userName: string, location: UserLocation };
 
@@ -77,6 +76,7 @@ export interface TownUpdateRequest {
   coveyTownPassword: string;
   friendlyName?: string;
   isPubliclyListed?: boolean;
+  townMap?: CoveyTownMapInfo;
 }
 
 /**

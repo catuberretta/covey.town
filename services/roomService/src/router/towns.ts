@@ -95,6 +95,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         coveyTownID: req.params.townID,
         isPubliclyListed: req.body.isPubliclyListed,
         friendlyName: req.body.friendlyName,
+        townMap: req.body.townMap,
         coveyTownPassword: req.body.coveyTownPassword,
       });
       res.status(StatusCodes.OK)
