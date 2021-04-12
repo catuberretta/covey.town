@@ -116,10 +116,10 @@ export default class CoveyTownController {
    * Updates the map of this town 
    * @param newMap the town's new map
    */
-     updateTownMap(newMap: CoveyTownMapInfo): void {
-      this._townMap = newMap;
-      this._listeners.forEach((listener) => listener.onMapUpdated(newMap));
-    }
+  updateTownMap(newMap: CoveyTownMapInfo): void {
+    this._townMap = newMap;
+    this._listeners.forEach((listener) => listener.onMapUpdated(newMap));
+  }
 
   /**
    * Destroys all data related to a player in this town.

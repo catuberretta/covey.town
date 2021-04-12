@@ -190,7 +190,7 @@ function townSocketAdapter(socket: Socket): CoveyTownListener {
       socket.emit('newPlayer', newPlayer);
     },
     onMapUpdated(newMap: CoveyTownMapInfo) {
-      socket.emit('mapUpdate', newMap)
+      socket.emit('mapUpdate', newMap);
     },
     onTownDestroyed() {
       socket.emit('townClosing');

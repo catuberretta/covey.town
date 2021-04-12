@@ -56,7 +56,6 @@ class CoveyGameScene extends Phaser.Scene {
   updateMap(newMap: CoveyTownMapInfo) {
     if (!this.ready) {
       this.townMapInfo = newMap;
-      return;
     }
   }
 
