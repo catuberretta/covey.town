@@ -76,16 +76,6 @@ export interface TownUpdateRequest {
   coveyTownPassword: string;
   friendlyName?: string;
   isPubliclyListed?: boolean;
-}
-
-/**
- * Payload sent by the client to update a Town's map
- * N.B., JavaScript is terrible, so:
- * if(!isPubliclyListed) -> evaluates to true if the value is false OR undefined, use ===
- */
- export interface TownMapUpdateRequest {
-  coveyTownID: string;
-  coveyTownPassword: string;
   townMap?: CoveyTownMapInfo;
 }
 
@@ -136,11 +126,6 @@ export default class TownsServiceClient {
   }
 
   async updateTown(requestData: TownUpdateRequest): Promise<void> {
-    const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(`/towns/${requestData.coveyTownID}`, requestData);
-    return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
-  }
-
-  async updateTownMap(requestData: TownMapUpdateRequest): Promise<void> {
     const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(`/towns/${requestData.coveyTownID}`, requestData);
     return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
   }

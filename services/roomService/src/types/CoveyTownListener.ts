@@ -1,3 +1,4 @@
+import { CoveyTownMapInfo } from '../CoveyTypes';
 import Player from './Player';
 
 /**
@@ -10,6 +11,12 @@ export default interface CoveyTownListener {
    */
   onPlayerJoined(newPlayer: Player): void;
 
+  /**
+   * Called when a player updates the town's map
+   * @param removedPlayer the player that disconnected
+   */
+   onMapUpdated(newMap: CoveyTownMapInfo): void;
+   
   /**
    * Called when a player's location changes
    * @param movedPlayer the player that moved

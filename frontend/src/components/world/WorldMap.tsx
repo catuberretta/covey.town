@@ -53,6 +53,13 @@ class CoveyGameScene extends Phaser.Scene {
     this.load.atlas('atlas', '/assets/atlas/atlas.png', '/assets/atlas/atlas.json');
   }
 
+  updateMap(newMap: CoveyTownMapInfo) {
+    if (!this.ready) {
+      this.townMapInfo = newMap;
+      return;
+    }
+  }
+
   updatePlayersLocations(players: Player[]) {
     if (!this.ready) {
       this.players = players;
@@ -434,23 +441,13 @@ class CoveyGameScene extends Phaser.Scene {
   }
 }
 
-interface TownInfoProps {
-  townMap: CoveyTownMapInfo;
-}
 
-export default function WorldMap(props: TownInfoProps): JSX.Element {
-
-  // const defaultMap = new TownMapInfo('Tuxedo Town', 'tuxmon-sample-32px-extruded.png','rose-town.json');
-
-  // This is the map that won't work
-  // const defaultMap = new TownMapInfo('Desert Town', '/assets/tilesets/tuxmon-sample-32px-extruded.png', '/assets/tilemaps/tuxemon-town3.json');
+export default function WorldMap(): JSX.Element {
 
   const video = Video.instance();
   const {
-    emitMovement, players,
+    emitMovement, players, currentTownMap
   } = useCoveyAppState();
-
-  const { townMap } = props;
 
   const [gameScene, setGameScene] = useState<CoveyGameScene>();
   useEffect(() => {
@@ -469,7 +466,7 @@ export default function WorldMap(props: TownInfoProps): JSX.Element {
 
     const game = new Phaser.Game(config);
     if (video) {
-      const newGameScene = new CoveyGameScene(video, emitMovement, townMap);
+      const newGameScene = new CoveyGameScene(video, emitMovement, currentTownMap);
       setGameScene(newGameScene);
       game.scene.add('coveyBoard', newGameScene, true);
       video.pauseGame = () => {
@@ -482,12 +479,13 @@ export default function WorldMap(props: TownInfoProps): JSX.Element {
     return () => {
       game.destroy(true);
     };
-  }, [video, emitMovement, townMap]);
+  }, [video, emitMovement, currentTownMap]);
 
   const deepPlayers = JSON.stringify(players);
   useEffect(() => {
     gameScene?.updatePlayersLocations(players);
-  }, [players, deepPlayers, gameScene]);
+    gameScene?.updateMap(currentTownMap);
+  }, [players, deepPlayers, currentTownMap, gameScene]);
 
   return <Grid templateColumns="repeat(2, 1fr)">         
   <div id="map-container"/>

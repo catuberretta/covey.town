@@ -35,6 +35,7 @@ type CoveyAppUpdate =
   | { action: 'playerMoved'; player: Player }
   | { action: 'playerDisconnect'; player: Player }
   | { action: 'weMoved'; location: UserLocation }
+  | { action: 'updateMap'; updatedMap: CoveyTownMapInfo }
   | { action: 'disconnect' }
   ;
 
@@ -112,6 +113,9 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     case 'addPlayer':
       nextState.players = nextState.players.concat([update.player]);
       break;
+    case 'updateMap':
+        nextState.currentTownMap = update.updatedMap;
+      break;
     case 'playerMoved':
       updatePlayer = nextState.players.find((p) => p.id === update.player.id);
       if (updatePlayer) {
@@ -167,12 +171,20 @@ async function GameController(initData: TownJoinResponse,
 
   const roomMap = initData.currentTownMap;
   const socket = io(url, { auth: { token: sessionToken, coveyTownID: video.coveyTownID } });
+  
   socket.on('newPlayer', (player: ServerPlayer) => {
     dispatchAppUpdate({
       action: 'addPlayer',
       player: Player.fromServerPlayer(player),
     });
   });
+
+  socket.on('mapUpdate', (newMap: CoveyTownMapInfo) => {
+    dispatchAppUpdate({ 
+      action: 'updateMap', 
+      updatedMap: newMap });
+  });
+
   socket.on('playerMoved', (player: ServerPlayer) => {
     if (player._id !== gamePlayerID) {
       dispatchAppUpdate({ action: 'playerMoved', player: Player.fromServerPlayer(player) });
@@ -184,10 +196,20 @@ async function GameController(initData: TownJoinResponse,
   socket.on('disconnect', () => {
     dispatchAppUpdate({ action: 'disconnect' });
   });
+
+
+
   const emitMovement = (location: UserLocation) => {
     socket.emit('playerMovement', location);
     dispatchAppUpdate({ action: 'weMoved', location });
   };
+
+  // const emitMapChange = (newMap: CoveyTownMapInfo) => {
+  //   socket.emit('playerUpdatedMap', newMap);
+  //   dispatchAppUpdate({ action: 'mapUpdated', newMap });
+  // };
+
+
 
   dispatchAppUpdate({
     action: 'doConnect',
@@ -235,7 +257,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     return (
 <div>
 <div>
-<WorldMap townMap={appState.currentTownMap} />
+<WorldMap />
 </div>
 
 <VideoOverlay preferredMode="fullwidth" />
@@ -244,7 +266,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
 
 
     );
-  }, [setupGameController, appState.sessionToken, appState.currentTownMap, videoInstance]);
+  }, [setupGameController, appState.sessionToken, videoInstance]);
   return (
 
     <CoveyAppContext.Provider value={appState}>

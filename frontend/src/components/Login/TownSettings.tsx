@@ -40,6 +40,7 @@ const TownSettings: React.FunctionComponent = () => {
   }, [onClose, video]);
 
   const toast = useToast()
+
   const processUpdates = async (action: string) =>{
     if(action === 'delete'){
       try{
