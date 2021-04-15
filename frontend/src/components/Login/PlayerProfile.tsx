@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from 'react';
 
 import {
-  Button,
-  Checkbox,
   FormControl,
   FormLabel,
   Input,
+  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,6 +19,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
+
 
 const PlayerProfile: React.FunctionComponent = () => {
 
@@ -77,11 +77,15 @@ const PlayerProfile: React.FunctionComponent = () => {
         </ModalBody>
 
         <ModalFooter>
+          <FormControl isRequired>
+              <FormLabel htmlFor="updatePassword">Town Update Password</FormLabel>
+                <Input data-testid="updatePassword" id="updatePassword" placeholder="Password" name="password" type="password" value={roomUpdatePassword} onChange={(e) => setRoomUpdatePassword(e.target.value)} />
+          </FormControl>
           <Button data-testid='updatebutton' colorScheme="blue" mr={3} value="update" name='action2' onClick={()=>processUpdates()}>
-            Update
+          Update
           </Button>
           <Button onClick={closeSettings}>Cancel</Button>
-        </ModalFooter>
+         </ModalFooter>
       </form>
     </ModalContent>
   </Modal>

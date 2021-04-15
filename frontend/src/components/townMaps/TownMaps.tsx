@@ -7,17 +7,13 @@ import React, { useState } from 'react';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import { CoveyTownMapInfo } from '../../classes/Town';
 
-
-
 export default function TownMaps(): JSX.Element {
 
     const defaultMap = { mapName: 'Tuxedo Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'tuxemon-town.json' };
     const roseTown = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json' };
-    const uploadedFile = {mapName: '', loadImg: '', mapJSON: '' };
+    // const uploadedFile = {mapName: '', loadImg: '', mapJSON: '' };
 
     const [newMap, setNewMap] = useState(defaultMap);
-    const [fileUpload, setFileUpload] = useState();
-    const [isFilePicked, setIsFilePicked] = useState(false);
     const { apiClient, currentTownID } = useCoveyAppState();
     const [roomUpdatePassword, setRoomUpdatePassword] = useState<string>('');
 
@@ -31,15 +27,14 @@ export default function TownMaps(): JSX.Element {
                 description: 'Make sure the file format is JSON',
                 status: 'error'
             });
-            // return;
           }
 
     }
 
     const handleSubmission = () => {
-        if (fileUpload) {
+        // if (fileUpload) {
             // console.log(fileUpload);
-        }
+        // }
     }
 
 

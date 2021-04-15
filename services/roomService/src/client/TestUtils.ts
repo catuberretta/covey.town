@@ -4,9 +4,8 @@ import {Socket as ServerSocket} from 'socket.io';
 
 import {AddressInfo} from 'net';
 import http from 'http';
+// import { TOO_MANY_REQUESTS } from 'http-status-codes';
 import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
-import CoveyTownController from '../lib/CoveyTownController';
-import { TOO_MANY_REQUESTS } from 'http-status-codes';
 
 export type RemoteServerPlayer = {
   location: UserLocation, _userName: string, _id: string

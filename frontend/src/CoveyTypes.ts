@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io-client';
-import Player, { UserLocation, SpriteInfo } from './classes/Player';
+import Player, { UserLocation } from './classes/Player';
 import { CoveyTownMapInfo } from './classes/Town';
 
 import TownsServiceClient from './classes/TownsServiceClient';

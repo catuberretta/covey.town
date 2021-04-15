@@ -54,11 +54,7 @@ class CoveyGameScene extends Phaser.Scene {
   }
 
   updateMap(newMap: CoveyTownMapInfo) {
-    console.log("does Update map get called?");
-    console.log(newMap);
     this.townMapInfo = newMap;
-    // this.load.image('tiles', `/assets/tilesets/${newMap.loadImg}`);
-    // this.load.tilemapTiledJSON('map', `/assets/tilemaps/${newMap.mapJSON}`);
   }
 
   updatePlayersLocations(players: Player[]) {
@@ -152,7 +148,6 @@ class CoveyGameScene extends Phaser.Scene {
   }
 
   update() {
-    // console.log(this.townMapInfo);
     if (this.paused) {
       return;
     }

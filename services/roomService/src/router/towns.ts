@@ -86,6 +86,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         });
     }
   });
+
   /**
    * Update a town
    */
