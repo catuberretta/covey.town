@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { Socket } from 'socket.io';
 import Player from '../types/Player';
-import { CoveyTownList, UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
+import { CoveyTownList, UserLocation, CoveyTownMapInfo, SpriteSheetInfo } from '../CoveyTypes';
 import CoveyTownListener from '../types/CoveyTownListener';
 import CoveyTownsStore from '../lib/CoveyTownsStore';
 
@@ -22,6 +22,8 @@ export interface TownJoinRequest {
 export interface TownJoinResponse {
   /** Unique ID that represents this player * */
   coveyUserID: string;
+  /** Sprite Sheet for player * */
+  currentSpriteSheet: SpriteSheetInfo;
   /** Secret token that this player should use to authenticate
    * in future requests to this service * */
   coveySessionToken: string;
@@ -116,6 +118,7 @@ export async function townJoinHandler(requestData: TownJoinRequest): Promise<Res
     isOK: true,
     response: {
       coveyUserID: newPlayer.id,
+      currentSpriteSheet: newPlayer.spriteSheet,
       coveySessionToken: newSession.sessionToken,
       providerVideoToken: newSession.videoToken,
       currentPlayers: coveyTownController.players,

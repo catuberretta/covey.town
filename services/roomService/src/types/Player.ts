@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { UserLocation } from '../CoveyTypes';
+import { UserLocation, SpriteSheetInfo } from '../CoveyTypes';
 
 /**
  * Each user who is connected to a town is represented by a Player object
@@ -7,6 +7,9 @@ import { UserLocation } from '../CoveyTypes';
 export default class Player {
   /** The current location of this user in the world map * */
   public location: UserLocation;
+
+  /** The current sprite of this user in the world map * */
+  private _spriteSheet: SpriteSheetInfo;
 
   /** The unique identifier for this player * */
   private readonly _id: string;
@@ -23,10 +26,15 @@ export default class Player {
     };
     this._userName = userName;
     this._id = nanoid();
+    this._spriteSheet = { spriteName: 'Misa', spritePNG: 'atlas.png' };
   }
 
   get userName(): string {
     return this._userName;
+  }
+
+  get spriteSheet(): SpriteSheetInfo {
+    return this._spriteSheet;
   }
 
   get id(): string {

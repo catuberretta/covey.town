@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from '@chakra-ui/react';
 import Phaser from 'phaser';
-import Player, { UserLocation } from '../../classes/Player';
+import Player, { UserLocation, SpriteSheetInfo } from '../../classes/Player';
 import { CoveyTownMapInfo } from '../../classes/Town';
 import Video from '../../classes/Video/Video';
 import TownMaps from '../townMaps/TownMaps';
@@ -39,19 +39,25 @@ class CoveyGameScene extends Phaser.Scene {
 
   private townMapInfo: CoveyTownMapInfo;
 
-  constructor(video: Video, emitMovement: (loc: UserLocation) => void, townMapInfo: CoveyTownMapInfo) {
+  private spriteSheetInfo: SpriteSheetInfo;
+
+  constructor(video: Video, emitMovement: (loc: UserLocation) => void, townMapInfo: CoveyTownMapInfo, spriteSheetInfo: SpriteSheetInfo) {
     super('PlayGame');
     this.video = video;
     this.emitMovement = emitMovement;
     this.townMapInfo = townMapInfo;
+    this.spriteSheetInfo = spriteSheetInfo;
   }
 
   preload() {
+    console.log(this.spriteSheetInfo);
     // this.load.image("logo", logoImg);
     this.load.image('tiles', `/assets/tilesets/${this.townMapInfo.loadImg}`);
     this.load.tilemapTiledJSON('map', `/assets/tilemaps/${this.townMapInfo.mapJSON}`);
-    this.load.atlas('atlas', '/assets/atlas/atlas.png', '/assets/atlas/atlas.json');
+    this.load.atlas('atlas', `/assets/atlas/${this.spriteSheetInfo.spritePNG}`, '/assets/atlas/atlas.json');
   }
+
+  
 
   updateMap(newMap: CoveyTownMapInfo) {
     this.townMapInfo = newMap;
@@ -444,7 +450,7 @@ export default function WorldMap(): JSX.Element {
 
   const video = Video.instance();
   const {
-    emitMovement, players, currentTownMap
+    emitMovement, players, currentTownMap, currentSpriteSheet,
   } = useCoveyAppState();
 
   const [gameScene, setGameScene] = useState<CoveyGameScene>();
@@ -464,7 +470,7 @@ export default function WorldMap(): JSX.Element {
 
     const game = new Phaser.Game(config);
     if (video) {
-      const newGameScene = new CoveyGameScene(video, emitMovement, currentTownMap);
+      const newGameScene = new CoveyGameScene(video, emitMovement, currentTownMap, currentSpriteSheet);
       setGameScene(newGameScene);
       game.scene.add('coveyBoard', newGameScene, true);
       video.pauseGame = () => {

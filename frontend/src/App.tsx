@@ -23,14 +23,14 @@ import { VideoProvider } from './components/VideoCall/VideoFrontend/components/V
 import ErrorDialog from './components/VideoCall/VideoFrontend/components/ErrorDialog/ErrorDialog';
 import theme from './components/VideoCall/VideoFrontend/theme';
 import { Callback } from './components/VideoCall/VideoFrontend/types';
-import Player, { ServerPlayer, UserLocation } from './classes/Player';
+import Player, { ServerPlayer, UserLocation, SpriteSheetInfo } from './classes/Player';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 // import TownMapInfo from './classes/TownMapInfo';
 
 
 type CoveyAppUpdate =
-  | { action: 'doConnect'; data: { userName: string, townFriendlyName: string, townID: string,townIsPubliclyListed:boolean, townMap: CoveyTownMapInfo, sessionToken: string, myPlayerID: string, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
+  | { action: 'doConnect'; data: { userName: string, townFriendlyName: string, townID: string, townIsPubliclyListed: boolean, townMap: CoveyTownMapInfo, sessionToken: string, myPlayerID: string, spriteSheet: SpriteSheetInfo, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
   | { action: 'addPlayer'; player: Player }
   | { action: 'playerMoved'; player: Player }
   | { action: 'playerDisconnect'; player: Player }
@@ -44,6 +44,7 @@ function defaultAppState(): CoveyAppState {
     nearbyPlayers: { nearbyPlayers: [] },
     players: [],
     myPlayerID: '',
+    currentSpriteSheet: { spriteName: '', spritePNG: '' },
     currentTownFriendlyName: '',
     currentTownID: '',
     currentTownIsPubliclyListed: false,
@@ -67,6 +68,7 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     currentTownIsPubliclyListed: state.currentTownIsPubliclyListed,
     currentTownMap: state.currentTownMap,
     myPlayerID: state.myPlayerID,
+    currentSpriteSheet: state.currentSpriteSheet,
     players: state.players,
     currentLocation: state.currentLocation,
     nearbyPlayers: state.nearbyPlayers,
@@ -101,6 +103,7 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     case 'doConnect':
       nextState.sessionToken = update.data.sessionToken;
       nextState.myPlayerID = update.data.myPlayerID;
+      nextState.currentSpriteSheet = update.data.spriteSheet;
       nextState.currentTownFriendlyName = update.data.townFriendlyName;
       nextState.currentTownID = update.data.townID;
       nextState.currentTownIsPubliclyListed = update.data.townIsPubliclyListed;
@@ -170,6 +173,10 @@ async function GameController(initData: TownJoinResponse,
   assert(roomName);
 
   const roomMap = initData.currentTownMap;
+  const playerSpriteSheet = initData.currentSpriteSheet;
+
+  console.log('Initial data', playerSpriteSheet);
+
   const socket = io(url, { auth: { token: sessionToken, coveyTownID: video.coveyTownID } });
   
   socket.on('newPlayer', (player: ServerPlayer) => {
@@ -216,6 +223,7 @@ async function GameController(initData: TownJoinResponse,
     data: {
       sessionToken,
       userName: video.userName,
+      spriteSheet: playerSpriteSheet,
       townFriendlyName: roomName,
       townID: video.coveyTownID,
       myPlayerID: gamePlayerID,

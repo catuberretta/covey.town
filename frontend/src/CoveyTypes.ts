@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io-client';
-import Player, { UserLocation } from './classes/Player';
+import Player, { UserLocation, SpriteSheetInfo } from './classes/Player';
 import { CoveyTownMapInfo } from './classes/Town';
 
 import TownsServiceClient from './classes/TownsServiceClient';
@@ -26,6 +26,7 @@ export type CoveyAppState = {
   currentTownIsPubliclyListed: boolean,
   currentTownMap: CoveyTownMapInfo,
   myPlayerID: string,
+  currentSpriteSheet: SpriteSheetInfo,
   players: Player[],
   currentLocation: UserLocation,
   nearbyPlayers: NearbyPlayers,

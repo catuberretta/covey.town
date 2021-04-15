@@ -96,7 +96,7 @@ export default class CoveyTownController {
    * player, and returning them
    *
    * @param newPlayer The new player to add to the town
-   */
+   **/
   async addPlayer(newPlayer: Player): Promise<PlayerSession> {
     const theSession = new PlayerSession(newPlayer);
 
