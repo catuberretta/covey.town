@@ -50,7 +50,6 @@ class CoveyGameScene extends Phaser.Scene {
   }
 
   preload() {
-    console.log(this.spriteSheetInfo);
     // this.load.image("logo", logoImg);
     this.load.image('tiles', `/assets/tilesets/${this.townMapInfo.loadImg}`);
     this.load.tilemapTiledJSON('map', `/assets/tilemaps/${this.townMapInfo.mapJSON}`);
@@ -483,7 +482,7 @@ export default function WorldMap(): JSX.Element {
     return () => {
       game.destroy(true);
     };
-  }, [video, emitMovement, currentTownMap]);
+  }, [video, emitMovement, currentTownMap, currentSpriteSheet]);
 
   const deepPlayers = JSON.stringify(players);
   useEffect(() => {

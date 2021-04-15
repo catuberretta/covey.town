@@ -9,7 +9,7 @@ export type UserLocation = {
 export type SpriteSheetInfo = 
 { spriteName: string, 
   spritePNG: string, 
-}
+};
 
 export type CoveyTownList = { friendlyName: string; coveyTownID: string; currentOccupancy: number; maximumOccupancy: number }[];
 export type CoveyTownMapInfo = { mapName: string, loadImg: string, mapJSON: string };

@@ -175,8 +175,6 @@ async function GameController(initData: TownJoinResponse,
   const roomMap = initData.currentTownMap;
   const playerSpriteSheet = initData.currentSpriteSheet;
 
-  console.log('Initial data', playerSpriteSheet);
-
   const socket = io(url, { auth: { token: sessionToken, coveyTownID: video.coveyTownID } });
   
   socket.on('newPlayer', (player: ServerPlayer) => {
