@@ -57,7 +57,7 @@ export default class CoveyTownsStore {
         existingTown.isPubliclyListed = makePublic;
       }
       if (townMap !== undefined) {
-        existingTown.coveyTownMap = townMap;
+        existingTown.updateTownMap(townMap);
       }
       return true;
 

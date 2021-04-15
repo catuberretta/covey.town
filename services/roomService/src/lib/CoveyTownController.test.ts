@@ -67,6 +67,12 @@ describe('CoveyTownController', () => {
       testingTown.updatePlayerLocation(player, newLocation);
       mockListeners.forEach(listener => expect(listener.onPlayerMoved).toBeCalledWith(player));
     });
+    it('should notify added listeners of map update when updateTownMap is called', async () => {
+      const newMap = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+      mockListeners.forEach(listener => testingTown.addTownListener(listener));
+      testingTown.updateTownMap(newMap);
+      mockListeners.forEach(listener => expect(listener.onMapUpdated).toBeCalledWith(newMap));
+    });
     it('should notify added listeners of player disconnections when destroySession is called', async () => {
       const player = new Player('test player');
       const session = await testingTown.addPlayer(player);
@@ -77,31 +83,34 @@ describe('CoveyTownController', () => {
     });
     it('should notify added listeners of new players when addPlayer is called', async () => {
       mockListeners.forEach(listener => testingTown.addTownListener(listener));
-
       const player = new Player('test player');
       await testingTown.addPlayer(player);
       mockListeners.forEach(listener => expect(listener.onPlayerJoined).toBeCalledWith(player));
-
     });
     it('should notify added listeners that the town is destroyed when disconnectAllPlayers is called', async () => {
       const player = new Player('test player');
       await testingTown.addPlayer(player);
-
       mockListeners.forEach(listener => testingTown.addTownListener(listener));
       testingTown.disconnectAllPlayers();
       mockListeners.forEach(listener => expect(listener.onTownDestroyed).toBeCalled());
-
     });
     it('should not notify removed listeners of player movement when updatePlayerLocation is called', async () => {
       const player = new Player('test player');
       await testingTown.addPlayer(player);
-
       mockListeners.forEach(listener => testingTown.addTownListener(listener));
       const newLocation = generateTestLocation();
       const listenerRemoved = mockListeners[1];
       testingTown.removeTownListener(listenerRemoved);
       testingTown.updatePlayerLocation(player, newLocation);
       expect(listenerRemoved.onPlayerMoved).not.toBeCalled();
+    });
+    it('should not notify removed listeners of map update when updateTownMap is called', async () => {
+      mockListeners.forEach(listener => testingTown.addTownListener(listener));
+      const newMap = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+      const listenerRemoved = mockListeners[1];
+      testingTown.removeTownListener(listenerRemoved);
+      testingTown.updateTownMap(newMap);
+      expect(listenerRemoved.onMapUpdated).not.toBeCalled();
     });
     it('should not notify removed listeners of player disconnections when destroySession is called', async () => {
       const player = new Player('test player');
@@ -173,6 +182,14 @@ describe('CoveyTownController', () => {
         expect(mockSocket.emit).toBeCalledWith('playerMoved', player);
 
       });
+      it('should add a town listener, which should emit "mapUpdate" to the socket when a map updates', async () => {
+        TestUtils.setSessionTokenAndTownID(testingTown.coveyTownID, session.sessionToken, mockSocket);
+        townSubscriptionHandler(mockSocket);
+        const newMap = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+        testingTown.updateTownMap(newMap);
+        expect(mockSocket.emit).toBeCalledWith('mapUpdate', newMap);
+
+      });
       it('should add a town listener, which should emit "playerDisconnect" to the socket when a player disconnects', async () => {
         TestUtils.setSessionTokenAndTownID(testingTown.coveyTownID, session.sessionToken, mockSocket);
         townSubscriptionHandler(mockSocket);
@@ -236,6 +253,23 @@ describe('CoveyTownController', () => {
           fail('No playerMovement handler registered');
         }
       });
+
+      // it('should forward playerUpdatedMap events from the socket to subscribed listeners', async () => {
+      //   TestUtils.setSessionTokenAndTownID(testingTown.coveyTownID, session.sessionToken, mockSocket);
+      //   townSubscriptionHandler(mockSocket);
+      //   const mockListener = mock<CoveyTownListener>();
+      //   testingTown.addTownListener(mockListener);
+      //   // find the 'playerUpdatedMap' event handler for the socket, which should have been registered after the socket was connected
+      //   const playerUpdatedMapHandler = mockSocket.on.mock.calls.find(call => call[0] === 'playerUpdatedMap');
+      //   if (playerUpdatedMapHandler && playerUpdatedMapHandler[1]) {
+      //     const newMap = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+      //     testingTown.coveyTownMap = newMap;
+      //     playerUpdatedMapHandler[1](newMap);
+      //     expect(mockListener.onMapUpdated).toHaveBeenCalledWith(newMap);
+      //   } else {
+      //     fail('No playerUpdatedMap handler registered');
+      //   }
+      // });
     });
   });
 });

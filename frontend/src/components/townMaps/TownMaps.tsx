@@ -1,7 +1,7 @@
 import {
     Box, Text, Link, Table, Tbody, Thead, Td, Tr, Button, useToast, FormControl,
     FormLabel,
-    Input,
+    Input
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
@@ -11,15 +11,38 @@ import { CoveyTownMapInfo } from '../../classes/Town';
 
 export default function TownMaps(): JSX.Element {
 
-    const defaultMap = { mapName: 'Tuxedo Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'tuxemon-town.json' }
-    const roseTown = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json' }
+    const defaultMap = { mapName: 'Tuxedo Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'tuxemon-town.json' };
+    const roseTown = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json' };
+    const uploadedFile = {mapName: '', loadImg: '', mapJSON: '' };
 
     const [newMap, setNewMap] = useState(defaultMap);
+    const [fileUpload, setFileUpload] = useState();
+    const [isFilePicked, setIsFilePicked] = useState(false);
     const { apiClient, currentTownID } = useCoveyAppState();
     const [roomUpdatePassword, setRoomUpdatePassword] = useState<string>('');
 
 
     const toast = useToast();
+
+    const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!event.target.files) {
+            toast({
+                title: 'Unable to upload map',
+                description: 'Make sure the file format is JSON',
+                status: 'error'
+            });
+            // return;
+          }
+
+    }
+
+    const handleSubmission = () => {
+        if (fileUpload) {
+            // console.log(fileUpload);
+        }
+    }
+
+
     const processUpdates = async () => {
         try {
             await apiClient.updateTown({
@@ -76,7 +99,9 @@ export default function TownMaps(): JSX.Element {
 
             <Box marginTop={20}>
                 <Text>You can also upload your own map, by creating a Tiled map using  <Link href="https://www.mapeditor.org/">Mapeditor.org</Link> </Text>
-                <Button marginTop={2}>Upload</Button>
+                <Link isExternal href='/assets/tilemaps/base-town.json'>Download the base map.</Link>
+                 <input type="file" name="file" onChange={event => changeHandler(event)}/>
+                <Button onClick={handleSubmission} marginTop={2}>Upload</Button>
             </Box>
 
         </Box>

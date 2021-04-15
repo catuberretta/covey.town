@@ -190,6 +190,7 @@ function townSocketAdapter(socket: Socket): CoveyTownListener {
       socket.emit('newPlayer', newPlayer);
     },
     onMapUpdated(newMap: CoveyTownMapInfo) {
+      console.log("gets here!");
       socket.emit('mapUpdate', newMap);
     },
     onTownDestroyed() {
@@ -239,9 +240,10 @@ export function townSubscriptionHandler(socket: Socket): void {
     townController.updatePlayerLocation(s.player, movementData);
   });
 
-  // Register an event listener for the client socket: if the client updates the 
-  // town map, inform the CoveyTownController
-  socket.on('playerUpdatedMap', (newmap: CoveyTownMapInfo) => {
-    townController.updateTownMap(newmap);
-  });
+  // // Register an event listener for the client socket: if the client updates the 
+  // // town map, inform the CoveyTownController
+  // //DONT NEED THIS
+  // socket.on('playerUpdatedMap', (newmap: CoveyTownMapInfo) => {
+  //   townController.updateTownMap(newmap);
+  // });
 }

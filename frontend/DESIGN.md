@@ -1,0 +1,1 @@
+A DESIGN.md document that includes documentation of your design (using CRC cards, UML class diagrams, and/or UML sequence diagrams as you find necessary; remember that a picture is worth a thousand words!). In particular, for any change that you had to make to the existing codebase, provide a rationale for why the change was made, and what alternatives were considered.

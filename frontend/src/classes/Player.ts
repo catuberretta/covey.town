@@ -5,6 +5,8 @@ export default class Player {
 
   private readonly _userName: string;
 
+  private _spriteSkin: SpriteInfo;
+
   public sprite?: Phaser.GameObjects.Sprite;
 
   public label?: Phaser.GameObjects.Text;
@@ -13,6 +15,7 @@ export default class Player {
     this._id = id;
     this._userName = userName;
     this.location = location;
+    this._spriteSkin = { spriteName: 'Misa', spritePNG: 'atlas.png', spriteJSON: 'atlas.json', };
   }
 
   get userName(): string {
@@ -22,6 +25,14 @@ export default class Player {
   get id(): string {
     return this._id;
   }
+
+  get spriteSkin(): SpriteInfo {
+    return this._spriteSkin;
+  }
+
+  // set spriteSkin(newSprite: SpriteInfo) {
+  //    this._spriteSkin === newSprite;
+  // }
 
   static fromServerPlayer(playerFromServer: ServerPlayer): Player {
     return new Player(playerFromServer._id, playerFromServer._userName, playerFromServer.location);
@@ -37,3 +48,9 @@ export type UserLocation = {
   rotation: Direction,
   moving: boolean
 };
+
+export type SpriteInfo = 
+{ spriteName: string, 
+  spritePNG: string, 
+  spriteJSON: string 
+}

@@ -5,13 +5,14 @@ import { nanoid } from 'nanoid';
 import { AddressInfo } from 'net';
 import * as TestUtils from './TestUtils';
 
-import { UserLocation } from '../CoveyTypes';
+import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
 import TownsServiceClient from './TownsServiceClient';
 import addTownRoutes from '../router/towns';
 
 type TestTownData = {
   friendlyName: string, coveyTownID: string,
   isPubliclyListed: boolean, townUpdatePassword: string
+  townMap: CoveyTownMapInfo;
 };
 
 describe('TownServiceApiSocket', () => {
@@ -28,6 +29,7 @@ describe('TownServiceApiSocket', () => {
     return {
       friendlyName,
       isPubliclyListed: isPublic,
+      townMap: { mapName: 'Tuxedo Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'tuxemon-town.json' },
       coveyTownID: ret.coveyTownID,
       townUpdatePassword: ret.coveyTownPassword,
     };
@@ -77,6 +79,17 @@ describe('TownServiceApiSocket', () => {
     expect(movedPlayer.location).toMatchObject(newLocation);
     expect(otherMovedPlayer.location).toMatchObject(newLocation);
   });
+  // it('Dispatches map updates to all clients in the same town', async () => {
+  //   const town = await createTownForTesting();
+  //   const joinData = await apiClient.joinTown({coveyTownID: town.coveyTownID, userName: nanoid()});
+  //   const joinData2 = await apiClient.joinTown({coveyTownID: town.coveyTownID, userName: nanoid()});
+  //   const socketSender = TestUtils.createSocketClient(server, joinData.coveySessionToken, town.coveyTownID).socket;
+  //   const { mapUpdated } = TestUtils.createSocketClient(server, joinData2.coveySessionToken, town.coveyTownID);
+  //   const newMap: CoveyTownMapInfo = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+  //   socketSender.emit('playerUpdatedMap', newMap);
+  //   await Promise.all([mapUpdated]);
+  //   expect((await mapUpdated).mapName).toBe(newMap.mapName);
+  // });
   it('Invalidates the user session after disconnection', async () => {
     // This test will timeout if it fails - it will never reach the expectation
     const town = await createTownForTesting();

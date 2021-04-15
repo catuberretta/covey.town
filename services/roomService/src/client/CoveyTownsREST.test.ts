@@ -4,6 +4,7 @@ import http from 'http';
 import { nanoid } from 'nanoid';
 import assert from 'assert';
 import { AddressInfo } from 'net';
+import { CoveyTownMapInfo } from '../CoveyTypes';
 
 import TownsServiceClient, { TownListResponse } from './TownsServiceClient';
 import addTownRoutes from '../router/towns';
@@ -11,6 +12,7 @@ import addTownRoutes from '../router/towns';
 type TestTownData = {
   friendlyName: string, coveyTownID: string,
   isPubliclyListed: boolean, townUpdatePassword: string
+  townMap: CoveyTownMapInfo;
 };
 
 function expectTownListMatches(towns: TownListResponse, town: TestTownData) {
@@ -38,9 +40,11 @@ describe('TownsServiceAPIREST', () => {
       friendlyName,
       isPubliclyListed: isPublic,
     });
+
     return {
       friendlyName,
       isPubliclyListed: isPublic,
+      townMap: { mapName: 'Tuxedo Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'tuxemon-town.json' },
       coveyTownID: ret.coveyTownID,
       townUpdatePassword: ret.coveyTownPassword,
     };
@@ -153,6 +157,8 @@ describe('TownsServiceAPIREST', () => {
     });
   });
   describe('CoveyTownUpdateAPI', () => {
+    const newMap: CoveyTownMapInfo = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+
     it('Checks the password before updating any values', async () => {
       const pubTown1 = await createTownForTesting(undefined, true);
       expectTownListMatches(await apiClient.listTowns(), pubTown1);
@@ -195,6 +201,18 @@ describe('TownsServiceAPIREST', () => {
         friendlyName: 'newName2',
       });
       pubTown1.friendlyName = 'newName2';
+      expectTownListMatches(await apiClient.listTowns(), pubTown1);
+    });
+    it('Updates the map as requested', async () => {
+      const pubTown1 = await createTownForTesting('testTown', true);
+      expectTownListMatches(await apiClient.listTowns(), pubTown1);
+      await apiClient.updateTown({
+        coveyTownID: pubTown1.coveyTownID,
+        coveyTownPassword: pubTown1.townUpdatePassword,
+        townMap: newMap,
+      });
+      pubTown1.townMap = newMap;
+      pubTown1.isPubliclyListed = true;
       expectTownListMatches(await apiClient.listTowns(), pubTown1);
     });
   });

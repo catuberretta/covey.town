@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import CoveyTownsStore from './CoveyTownsStore';
 import CoveyTownListener from '../types/CoveyTownListener';
 import Player from '../types/Player';
+import { CoveyTownMapInfo } from '../CoveyTypes';
 
 const mockCoveyListenerTownDestroyed = jest.fn();
 const mockCoveyListenerOtherFns = jest.fn();
@@ -13,6 +14,9 @@ function mockCoveyListener(): CoveyTownListener {
     },
     onPlayerMoved(movedPlayer: Player): void {
       mockCoveyListenerOtherFns(movedPlayer);
+    },
+    onMapUpdated(newMap: CoveyTownMapInfo) {
+      mockCoveyListenerOtherFns(newMap);
     },
     onTownDestroyed() {
       mockCoveyListenerTownDestroyed();
@@ -87,6 +91,7 @@ describe('CoveyTownsStore', () => {
       const town = createTownForTesting();
       const { friendlyName } = town;
 
+
       const res = CoveyTownsStore.getInstance()
         .updateTown('abcdef', town.townUpdatePassword, 'newName', true);
       expect(res)
@@ -98,6 +103,7 @@ describe('CoveyTownsStore', () => {
 
     });
     it('Should update the town parameters', async () => {
+      
 
       // First try with just a visiblity change
       const town = createTownForTesting();
@@ -131,6 +137,15 @@ describe('CoveyTownsStore', () => {
         .toBe(false);
       expect(town.friendlyName)
         .toBe(friendlyName);
+
+      const newMap: CoveyTownMapInfo = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+      // Now try to change map
+      const res4 = CoveyTownsStore.getInstance()
+        .updateTown(town.coveyTownID, town.townUpdatePassword, undefined, undefined, newMap);
+      expect(res4)
+        .toBe(true);
+      expect(town.coveyTownMap)
+        .toBe(newMap);
     });
   });
 

@@ -119,6 +119,7 @@ export default class TownsServiceClient {
     }
     throw new Error(`Error processing request: ${response.data.message}`);
   }
+  
 
   async createTown(requestData: TownCreateRequest): Promise<TownCreateResponse> {
     const responseWrapper = await this._axios.post<ResponseEnvelope<TownCreateResponse>>('/towns', requestData);
