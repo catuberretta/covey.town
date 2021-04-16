@@ -4,6 +4,7 @@ import io from 'socket.io';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
 import {
+  spriteUpdatedHandler,
   townCreateHandler, townDeleteHandler,
   townJoinHandler,
   townListHandler,
@@ -107,6 +108,23 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         .json({
           message: 'Internal server error, please see log in server for more details',
         });
+    }
+  });
+
+  app.patch(' /player/:playerID', BodyParser.json(), async (req, res) => {
+    try {
+      const result = await spriteUpdatedHandler({
+        spriteName: req.params.spriteName,
+        spritePNG: req.body.spritePNG,
+        spriteJSON: req.body.spriteJSON,
+        spriteSheet: req.body.spriteSheet,
+      });
+      res.status(StatusCodes.OK).json(result);
+    } catch(err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more deatils',
+      });
     }
   });
 

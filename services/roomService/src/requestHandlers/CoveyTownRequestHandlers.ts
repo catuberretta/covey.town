@@ -4,6 +4,7 @@ import Player from '../types/Player';
 import { CoveyTownList, UserLocation, CoveyTownMapInfo, SpriteSheetInfo } from '../CoveyTypes';
 import CoveyTownListener from '../types/CoveyTownListener';
 import CoveyTownsStore from '../lib/CoveyTownsStore';
+import TownsServiceClient from '../client/TownsServiceClient';
 
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
@@ -82,6 +83,13 @@ export interface TownUpdateRequest {
   friendlyName?: string;
   isPubliclyListed?: boolean;
   townMap?: CoveyTownMapInfo;
+}
+
+export interface SpriteUpdateRequest {
+  spriteName: string;
+  spritePNG: string;
+  spriteJSON: string;
+  spriteSheet?: SpriteSheetInfo;
 }
 
 /**
@@ -172,6 +180,16 @@ export async function townUpdateHandler(requestData: TownUpdateRequest): Promise
     isOK: success,
     response: {},
     message: !success ? 'Invalid password or update values specified. Please double check your town update password.' : undefined,
+  };
+}
+
+export async function spriteUpdatedHandler(requestData: SpriteUpdateRequest): Promise<ResponseEnvelope<Record<string, null>>> {
+  const spriteStore = TownsServiceClient;
+  const success = spriteStore.updateSprite(requestData.spriteName, requestData.spritePNG, requestData.spriteJSON, requestData.spriteSheet);
+  return {
+    isOK: success,
+    response: {},
+    message: !success ? 'Invalid spritePNG or JSON value specified. Please double check your update sprite sheet' : undefined,
   };
 }
 

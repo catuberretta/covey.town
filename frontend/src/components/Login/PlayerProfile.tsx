@@ -19,14 +19,17 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
+import { SpriteSheetInfo } from '../../classes/Player';
 
 
 const PlayerProfile: React.FunctionComponent = () => {
 
+  const defaultSprite = { spriteName: 'Default Sprite', spritePNG: 'atals.png',spriteJSON: 'atlas.json'};
+  const newMisa = { spriteName: 'Misa', spritePNG: 'new-atals.png',spriteJSON: 'new-atlas.json'};
   const {isOpen, onOpen, onClose} = useDisclosure()
   const video = useMaybeVideo()
-  const {apiClient, userName, currentTownID, myPlayerID} = useCoveyAppState();
-  const [roomUpdatePassword, setRoomUpdatePassword] = useState<string>('');
+  const {apiClient, userName, currentTownID, myPlayerID, currentSpriteName, currentSpritePNG} = useCoveyAppState();
+  const [updateSprite, setUpdateSprite] = useState<string>('');
 
   const openSettings = useCallback(()=>{
     onOpen();
@@ -43,10 +46,9 @@ const PlayerProfile: React.FunctionComponent = () => {
   
   const processUpdates = async () => {
       try {
-          await apiClient.updateTown({
-              coveyTownID: currentTownID,
-              coveyTownPassword: roomUpdatePassword,
-              
+          await apiClient.updateSprite({
+              spriteName: currentSpriteName,
+              spritePNG: currentSpritePNG,         
           });
           toast({
               title: 'Avatar updated',
@@ -55,12 +57,13 @@ const PlayerProfile: React.FunctionComponent = () => {
           })
       } catch (err) {
           toast({
-              title: 'Unable to update town',
+              title: 'Unable to update the sprite sheet',
               description: err.toString(),
               status: 'error'
           });
       }
   }
+  const allSprite: Array<SpriteSheetInfo> = [defaultSprite, newMisa];
 
   return <>
   <MenuItem data-testid='openMenuButton' onClick={openSettings}>
@@ -78,8 +81,8 @@ const PlayerProfile: React.FunctionComponent = () => {
 
         <ModalFooter>
           <FormControl isRequired>
-              <FormLabel htmlFor="updatePassword">Town Update Password</FormLabel>
-                <Input data-testid="updatePassword" id="updatePassword" placeholder="Password" name="password" type="password" value={roomUpdatePassword} onChange={(e) => setRoomUpdatePassword(e.target.value)} />
+              <FormLabel htmlFor="updateSprite">Update Your Avatar</FormLabel>
+                <Input data-testid="updateSprite" id="updateSprite" placeholder="Sprite" name="sprite" type="sprite" value={updateSprite} onChange={(e) => setUpdateSprite(e.target.value)} />
           </FormControl>
           <Button data-testid='updatebutton' colorScheme="blue" mr={3} value="update" name='action2' onClick={()=>processUpdates()}>
           Update

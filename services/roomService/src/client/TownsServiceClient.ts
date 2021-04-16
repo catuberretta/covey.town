@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import assert from 'assert';
 import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
+import { SpriteUpdateRequest } from '../requestHandlers/CoveyTownRequestHandlers';
 
 export type ServerPlayer = { _id: string, _userName: string, location: UserLocation };
 
@@ -143,6 +144,11 @@ export default class TownsServiceClient {
   async joinTown(requestData: TownJoinRequest): Promise<TownJoinResponse> {
     const responseWrapper = await this._axios.post('/sessions', requestData);
     return TownsServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async updateSprite(requestData: SpriteUpdateRequest): Promise<void> {
+    const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(`/sprites/${requestData.spritePNG}/${requestData.spriteName}`);
+    return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
   }
 
 }

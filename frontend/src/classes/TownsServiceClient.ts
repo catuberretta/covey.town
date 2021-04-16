@@ -148,4 +148,9 @@ export default class TownsServiceClient {
     return TownsServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
+  async updateSprite(requestData: SpriteSheetInfo): Promise<void> {
+    const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(`/sprites/${requestData.spritePNG}/${requestData.spriteName}`);
+    return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
+  }
+ 
 }
