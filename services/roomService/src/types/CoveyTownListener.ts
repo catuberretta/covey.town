@@ -18,6 +18,12 @@ export default interface CoveyTownListener {
   onMapUpdated(newMap: CoveyTownMapInfo): void;
 
   /**
+   * Called when a player's sprite sheet is updated
+   * @param player the player whose sprite sheet updated
+   */
+  onPlayerSpriteUpdated(player: Player): void;
+
+  /**
    * Called when a player's location changes
    * @param movedPlayer the player that moved
    */

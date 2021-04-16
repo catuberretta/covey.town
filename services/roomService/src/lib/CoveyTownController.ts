@@ -1,5 +1,5 @@
 import { customAlphabet, nanoid } from 'nanoid';
-import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
+import { UserLocation, CoveyTownMapInfo, SpriteSheetInfo } from '../CoveyTypes';
 import CoveyTownListener from '../types/CoveyTownListener';
 import Player from '../types/Player';
 import PlayerSession from '../types/PlayerSession';
@@ -130,6 +130,17 @@ export default class CoveyTownController {
     this._players = this._players.filter((p) => p.id !== session.player.id);
     this._sessions = this._sessions.filter((s) => s.sessionToken !== session.sessionToken);
     this._listeners.forEach((listener) => listener.onPlayerDisconnected(session.player));
+  }
+
+
+  /**
+   * Updates the player's sprite
+   * @param player Player to update sprite for
+   * @param location New sprite for this player
+   */
+  updateSprite(player: Player, newSprite: SpriteSheetInfo): void {
+    player.updateSpriteSheet(newSprite);
+    this._listeners.forEach((listener) => listener.onPlayerSpriteUpdated(player));
   }
 
   /**

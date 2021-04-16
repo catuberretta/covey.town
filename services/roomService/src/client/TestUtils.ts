@@ -5,10 +5,10 @@ import {Socket as ServerSocket} from 'socket.io';
 import {AddressInfo} from 'net';
 import http from 'http';
 // import { TOO_MANY_REQUESTS } from 'http-status-codes';
-import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
+import { UserLocation, CoveyTownMapInfo, SpriteSheetInfo } from '../CoveyTypes';
 
 export type RemoteServerPlayer = {
-  location: UserLocation, _userName: string, _id: string
+  location: UserLocation, _userName: string, _id: string, spriteSheet: SpriteSheetInfo
 };
 
 const createdSocketClients: Socket[] = [];
@@ -45,6 +45,7 @@ export function createSocketClient(server: http.Server, sessionToken: string, co
   socketConnected: Promise<void>,
   socketDisconnected: Promise<void>,
   playerMoved: Promise<RemoteServerPlayer>,
+  spriteUpdated: Promise<RemoteServerPlayer>,
   mapUpdated: Promise<CoveyTownMapInfo>,
   newPlayerJoined: Promise<RemoteServerPlayer>,
   playerDisconnected: Promise<RemoteServerPlayer>,
@@ -69,6 +70,11 @@ export function createSocketClient(server: http.Server, sessionToken: string, co
       resolve(player);
     });
   });
+  const playerSpriteUpdatedPromise = new Promise<RemoteServerPlayer>((resolve) => {
+    socket.on('spriteUpdate', (player: RemoteServerPlayer) => {
+      resolve(player);
+    });
+  });
   const mapUpdatedPromise = new Promise<CoveyTownMapInfo>((resolve) => {
     socket.on('mapUpdate', (newMap: CoveyTownMapInfo) => {
       resolve(newMap);  
@@ -90,6 +96,7 @@ export function createSocketClient(server: http.Server, sessionToken: string, co
     socketConnected: connectPromise,
     socketDisconnected: disconnectPromise,
     playerMoved: playerMovedPromise,
+    spriteUpdated: playerSpriteUpdatedPromise,
     mapUpdated: mapUpdatedPromise,
     newPlayerJoined: newPlayerPromise,
     playerDisconnected: playerDisconnectPromise,

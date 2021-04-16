@@ -52,7 +52,12 @@ class CoveyGameScene extends Phaser.Scene {
   preload() {
     // this.load.image("logo", logoImg);
     this.load.image('tiles', `/assets/tilesets/${this.townMapInfo.loadImg}`);
+
+    if (this.townMapInfo.mapName === 'Uploaded Map') {
+      this.load.tilemapTiledJSON('map', `${this.townMapInfo.mapJSON}`);
+    }
     this.load.tilemapTiledJSON('map', `/assets/tilemaps/${this.townMapInfo.mapJSON}`);
+
     this.load.atlas('atlas', `/assets/atlas/${this.spriteSheetInfo.spritePNG}`, '/assets/atlas/atlas.json');
   }
 
@@ -60,6 +65,10 @@ class CoveyGameScene extends Phaser.Scene {
 
   updateMap(newMap: CoveyTownMapInfo) {
     this.townMapInfo = newMap;
+  }
+
+  updateSprite(newSprite: SpriteSheetInfo) {
+    this.spriteSheetInfo = newSprite;
   }
 
   updatePlayersLocations(players: Player[]) {
@@ -223,7 +232,6 @@ class CoveyGameScene extends Phaser.Scene {
         this.emitMovement(this.lastLocation);
       }
     }
-    // this.updateMap(this.townMapInfo);
   }
 
   create() {
@@ -488,7 +496,8 @@ export default function WorldMap(): JSX.Element {
   useEffect(() => {
     gameScene?.updatePlayersLocations(players);
     gameScene?.updateMap(currentTownMap);
-  }, [players, deepPlayers, currentTownMap, gameScene]);
+    gameScene?.updateSprite(currentSpriteSheet);
+  }, [players, deepPlayers, currentTownMap, currentSpriteSheet,gameScene]);
 
   return <Grid templateColumns="repeat(2, 1fr)">         
   <div id="map-container"/>

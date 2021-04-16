@@ -36,6 +36,7 @@ type CoveyAppUpdate =
   | { action: 'playerDisconnect'; player: Player }
   | { action: 'weMoved'; location: UserLocation }
   | { action: 'updateMap'; updatedMap: CoveyTownMapInfo }
+  | { action: 'updateSprite'; updatedSprite: SpriteSheetInfo }
   | { action: 'disconnect' }
   ;
 
@@ -119,6 +120,9 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     case 'updateMap':
         nextState.currentTownMap = update.updatedMap;
       break;
+      case 'updateSprite':
+        nextState.currentSpriteSheet = update.updatedSprite;
+      break;
     case 'playerMoved':
       updatePlayer = nextState.players.find((p) => p.id === update.player.id);
       if (updatePlayer) {
@@ -190,6 +194,12 @@ async function GameController(initData: TownJoinResponse,
       updatedMap: newMap });
   });
 
+  socket.on('spriteUpdate', (newSprite: SpriteSheetInfo) => {
+    dispatchAppUpdate({ 
+      action: 'updateSprite', 
+      updatedSprite: newSprite });
+  });
+
   socket.on('playerMoved', (player: ServerPlayer) => {
     if (player._id !== gamePlayerID) {
       dispatchAppUpdate({ action: 'playerMoved', player: Player.fromServerPlayer(player) });
@@ -208,13 +218,6 @@ async function GameController(initData: TownJoinResponse,
     socket.emit('playerMovement', location);
     dispatchAppUpdate({ action: 'weMoved', location });
   };
-
-  // const emitMapChange = (newMap: CoveyTownMapInfo) => {
-  //   socket.emit('playerUpdatedMap', newMap);
-  //   dispatchAppUpdate({ action: 'mapUpdated', newMap });
-  // };
-
-
 
   dispatchAppUpdate({
     action: 'doConnect',
@@ -238,8 +241,6 @@ async function GameController(initData: TownJoinResponse,
 function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefined>> }) {
   const [appState, dispatchAppUpdate] = useReducer(appStateReducer, defaultAppState());
   
-  // const defaultMap = new TownMapInfo('Tuxemon Town', 'tuxmon-sample-32px-extruded.png','tuxemon-town.json');
-
   const setupGameController = useCallback(async (initData: TownJoinResponse) => {
     await GameController(initData, dispatchAppUpdate);
     return true;

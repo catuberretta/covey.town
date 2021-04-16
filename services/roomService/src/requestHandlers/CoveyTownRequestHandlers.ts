@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { Socket } from 'socket.io';
-import Player from '../types/Player';
-import { CoveyTownList, UserLocation, CoveyTownMapInfo, SpriteSheetInfo } from '../CoveyTypes';
-import CoveyTownListener from '../types/CoveyTownListener';
+import { CoveyTownList, CoveyTownMapInfo, SpriteSheetInfo, UserLocation } from '../CoveyTypes';
 import CoveyTownsStore from '../lib/CoveyTownsStore';
+import CoveyTownListener from '../types/CoveyTownListener';
+import Player from '../types/Player';
 
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
@@ -85,6 +85,28 @@ export interface TownUpdateRequest {
 }
 
 /**
+ * Payload sent by the client to update a Sprite
+ * N.B., JavaScript is terrible, so:
+ * if(!isPubliclyListed) -> evaluates to true if the value is false OR undefined, use ===
+ */
+export interface SpriteUpdateRequest {
+  coveyTownID: string;
+  playerID: string;
+  newSprite: SpriteSheetInfo;
+}
+
+/**
+ * Payload sent by the client to create a map from upload
+ * N.B., JavaScript is terrible, so:
+ * if(!isPubliclyListed) -> evaluates to true if the value is false OR undefined, use ===
+ */
+export interface MapUploadRequest {
+  fileName: string;
+  filePath: string;
+  fileType: string;
+}
+
+/**
  * Envelope that wraps any response from the server
  */
 export interface ResponseEnvelope<T> {
@@ -101,7 +123,9 @@ export interface ResponseEnvelope<T> {
  *
  * @param requestData an object representing the player's request
  */
-export async function townJoinHandler(requestData: TownJoinRequest): Promise<ResponseEnvelope<TownJoinResponse>> {
+export async function townJoinHandler(
+  requestData: TownJoinRequest,
+): Promise<ResponseEnvelope<TownJoinResponse>> {
   const townsStore = CoveyTownsStore.getInstance();
 
   const coveyTownController = townsStore.getControllerForTown(requestData.coveyTownID);
@@ -137,7 +161,9 @@ export async function townListHandler(): Promise<ResponseEnvelope<TownListRespon
   };
 }
 
-export async function townCreateHandler(requestData: TownCreateRequest): Promise<ResponseEnvelope<TownCreateResponse>> {
+export async function townCreateHandler(
+  requestData: TownCreateRequest,
+): Promise<ResponseEnvelope<TownCreateResponse>> {
   const townsStore = CoveyTownsStore.getInstance();
   if (requestData.friendlyName.length === 0) {
     return {
@@ -155,23 +181,74 @@ export async function townCreateHandler(requestData: TownCreateRequest): Promise
   };
 }
 
-export async function townDeleteHandler(requestData: TownDeleteRequest): Promise<ResponseEnvelope<Record<string, null>>> {
+export async function townCreateUploadedMap(
+  requestData: MapUploadRequest,
+): Promise<ResponseEnvelope<CoveyTownMapInfo>> {
+  if (requestData.filePath.length === 0 || requestData.fileName.length === 0) {
+    return {
+      isOK: false,
+      message: 'Filename and Filepath must be specified',
+    };
+  }
+  return {
+    isOK: true,
+    response: {
+      mapName: requestData.fileType,
+      loadImg: 'tuxmon-sample-32px-extruded.png',
+      mapJSON: requestData.filePath,
+    },
+  };
+}
+
+export async function townDeleteHandler(
+  requestData: TownDeleteRequest,
+): Promise<ResponseEnvelope<Record<string, null>>> {
   const townsStore = CoveyTownsStore.getInstance();
   const success = townsStore.deleteTown(requestData.coveyTownID, requestData.coveyTownPassword);
   return {
     isOK: success,
     response: {},
-    message: !success ? 'Invalid password. Please double check your town update password.' : undefined,
+    message: !success
+      ? 'Invalid password. Please double check your town update password.'
+      : undefined,
   };
 }
 
-export async function townUpdateHandler(requestData: TownUpdateRequest): Promise<ResponseEnvelope<Record<string, null>>> {
+export async function townUpdateHandler(
+  requestData: TownUpdateRequest,
+): Promise<ResponseEnvelope<Record<string, null>>> {
   const townsStore = CoveyTownsStore.getInstance();
-  const success = townsStore.updateTown(requestData.coveyTownID, requestData.coveyTownPassword, requestData.friendlyName, requestData.isPubliclyListed, requestData.townMap);
+  const success = townsStore.updateTown(
+    requestData.coveyTownID,
+    requestData.coveyTownPassword,
+    requestData.friendlyName,
+    requestData.isPubliclyListed,
+    requestData.townMap,
+  );
   return {
     isOK: success,
     response: {},
-    message: !success ? 'Invalid password or update values specified. Please double check your town update password.' : undefined,
+    message: !success
+      ? 'Invalid password or update values specified. Please double check your town update password.'
+      : undefined,
+  };
+}
+
+export async function playerUpdateHandler(
+  requestData: SpriteUpdateRequest,
+): Promise<ResponseEnvelope<Record<string, null>>> {
+  const townsStore = CoveyTownsStore.getInstance();
+  const success = townsStore.updateSprite(
+    requestData.coveyTownID,
+    requestData.playerID,
+    requestData.newSprite,
+  );
+  return {
+    isOK: success,
+    response: {},
+    message: !success
+      ? 'Invalid update values specified. Please double check your townID and playerID.'
+      : undefined,
   };
 }
 
@@ -195,6 +272,9 @@ function townSocketAdapter(socket: Socket): CoveyTownListener {
     onMapUpdated(newMap: CoveyTownMapInfo) {
       socket.emit('mapUpdate', newMap);
     },
+    onPlayerSpriteUpdated(player: Player) {
+      socket.emit('spriteUpdate', player);
+    },
     onTownDestroyed() {
       socket.emit('townClosing');
       socket.disconnect(true);
@@ -212,8 +292,7 @@ export function townSubscriptionHandler(socket: Socket): void {
   // For each player, the session token should be the same string returned by joinTownHandler
   const { token, coveyTownID } = socket.handshake.auth as { token: string; coveyTownID: string };
 
-  const townController = CoveyTownsStore.getInstance()
-    .getControllerForTown(coveyTownID);
+  const townController = CoveyTownsStore.getInstance().getControllerForTown(coveyTownID);
 
   // Retrieve our metadata about this player from the TownController
   const s = townController?.getSessionByToken(token);
@@ -241,11 +320,4 @@ export function townSubscriptionHandler(socket: Socket): void {
   socket.on('playerMovement', (movementData: UserLocation) => {
     townController.updatePlayerLocation(s.player, movementData);
   });
-
-  // // Register an event listener for the client socket: if the client updates the 
-  // // town map, inform the CoveyTownController
-  // //DONT NEED THIS
-  // socket.on('playerUpdatedMap', (newmap: CoveyTownMapInfo) => {
-  //   townController.updateTownMap(newmap);
-  // });
 }

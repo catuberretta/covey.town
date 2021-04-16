@@ -1,5 +1,5 @@
+import { CoveyTownList, CoveyTownMapInfo, SpriteSheetInfo } from '../CoveyTypes';
 import CoveyTownController from './CoveyTownController';
-import { CoveyTownList, CoveyTownMapInfo } from '../CoveyTypes';
 
 function passwordMatches(provided: string, expected: string): boolean {
   if (provided === expected) {
@@ -28,7 +28,8 @@ export default class CoveyTownsStore {
   }
 
   getTowns(): CoveyTownList {
-    return this._towns.filter(townController => townController.isPubliclyListed)
+    return this._towns
+      .filter(townController => townController.isPubliclyListed)
       .map(townController => ({
         coveyTownID: townController.coveyTownID,
         friendlyName: townController.friendlyName,
@@ -43,8 +44,13 @@ export default class CoveyTownsStore {
     return newTown;
   }
 
-  updateTown(coveyTownID: string, coveyTownPassword: string, friendlyName?: string, makePublic?: boolean, townMap?: CoveyTownMapInfo): boolean {
-
+  updateTown(
+    coveyTownID: string,
+    coveyTownPassword: string,
+    friendlyName?: string,
+    makePublic?: boolean,
+    townMap?: CoveyTownMapInfo,
+  ): boolean {
     const existingTown = this.getControllerForTown(coveyTownID);
     if (existingTown && passwordMatches(coveyTownPassword, existingTown.townUpdatePassword)) {
       if (friendlyName !== undefined) {
@@ -60,9 +66,21 @@ export default class CoveyTownsStore {
         existingTown.updateTownMap(townMap);
       }
       return true;
-
     }
     return false;
+  }
+
+  updateSprite(coveyTownID: string, playerID: string, newSprite: SpriteSheetInfo): boolean {
+    const existingTown = this.getControllerForTown(coveyTownID);
+    let result = false;
+    if (existingTown && playerID.length !== 0) {
+      const foundPlayer = existingTown.players.find(player => player.id === playerID);
+      if (foundPlayer) {
+        foundPlayer.updateSpriteSheet(newSprite);
+        result = true;
+      }
+    }
+    return result;
   }
 
   deleteTown(coveyTownID: string, coveyTownPassword: string): boolean {
@@ -74,5 +92,4 @@ export default class CoveyTownsStore {
     }
     return false;
   }
-
 }

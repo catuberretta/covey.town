@@ -217,6 +217,38 @@ describe('TownsServiceAPIREST', () => {
     });
   });
 
+  // TO DO
+  // describe('CoveySpriteUpdateApi', () => {
+  //   const avatar = {
+  //     spriteName: 'Misa - Dark hair', 
+  //     spritePNG: 'atlas-alternate.png'
+  //   };
+  //   it('Updates just the player,s sprite as requested', async () => {
+  //     console.log('lets test covey sprite update');
+  //     const pubTown1 = await createTownForTesting('testTown', true);
+  //     const player = new Player('test player');
+  //     const player2 = new Player('second player');
+  //     const join = await apiClient.joinTown({
+  //       userName: player.userName,
+  //       coveyTownID: pubTown1.coveyTownID,
+  //     });
+  //     console.log(player.id);
+  //     console.log(join.coveyUserID);
+  //     console.log(join.currentPlayers);
+  //     const join2 = await apiClient.joinTown({
+  //       userName: player2.userName,
+  //       coveyTownID: pubTown1.coveyTownID,
+  //     });
+  //     const res = await apiClient.updateSprite({
+  //       coveyTownID: pubTown1.coveyTownID,
+  //       playerID: player.id,
+  //       newSprite: avatar,
+  //     });
+  //     expect(player.spriteSheet)
+  //     .toBe(avatar);
+  //   });
+  // });
+
   describe('CoveyMemberAPI', () => {
     it('Throws an error if the town does not exist', async () => {
       await createTownForTesting(undefined, true);

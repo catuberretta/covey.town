@@ -41,6 +41,10 @@ export default class Player {
     return this._id;
   }
 
+  updateSpriteSheet(newSprite: SpriteSheetInfo): void {
+    this._spriteSheet = newSprite;
+  }
+
   updateLocation(location: UserLocation): void {
     this.location = location;
   }

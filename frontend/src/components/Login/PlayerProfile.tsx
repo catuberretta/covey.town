@@ -1,9 +1,5 @@
 import React, { useCallback, useState } from 'react';
-
 import {
-  FormControl,
-  FormLabel,
-  Input,
   Button,
   Modal,
   ModalBody,
@@ -13,20 +9,37 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  useToast
+  useToast,
+  Table,
+  Thead,
+  Tr,
+  Tbody,
+  Td,
+  Text,
 } from '@chakra-ui/react';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
-
+import { SpriteSheetInfo } from '../../classes/Player';
 
 const PlayerProfile: React.FunctionComponent = () => {
 
+  const defaultAvatar = {
+    spriteName: 'Misa', 
+    spritePNG: 'atlas.png'
+  };
+  const alternateAvatar = {
+    spriteName: 'Misa - Dark hair', 
+    spritePNG: 'atlas-alternate.png'
+  };
+
+  const allAvatars: Array<SpriteSheetInfo> = [defaultAvatar, alternateAvatar];
+
   const {isOpen, onOpen, onClose} = useDisclosure()
   const video = useMaybeVideo()
-  const {apiClient, userName, currentTownID, myPlayerID} = useCoveyAppState();
-  const [roomUpdatePassword, setRoomUpdatePassword] = useState<string>('');
+  const {apiClient, userName, currentTownID, myPlayerID, sessionToken } = useCoveyAppState();
+  const [newAvatar, setNewAvatar] = useState(defaultAvatar);
 
   const openSettings = useCallback(()=>{
     onOpen();
@@ -43,19 +56,21 @@ const PlayerProfile: React.FunctionComponent = () => {
   
   const processUpdates = async () => {
       try {
-          await apiClient.updateTown({
-              coveyTownID: currentTownID,
-              coveyTownPassword: roomUpdatePassword,
-              
+          await apiClient.updateSprite({
+            coveyTownID: currentTownID,
+            playerID: sessionToken,
+            newSprite: newAvatar,
           });
           toast({
               title: 'Avatar updated',
-              description: 'To see updated avatar, please exit and re-join any town',
-              status: 'success'
+              description: `Your avatar is now ${newAvatar.spriteName} map`,
+              status: 'success',
+              isClosable: true,
+              duration: null,
           })
       } catch (err) {
           toast({
-              title: 'Unable to update town',
+              title: 'Unable to update sprite',
               description: err.toString(),
               status: 'error'
           });
@@ -73,17 +88,29 @@ const PlayerProfile: React.FunctionComponent = () => {
       <ModalCloseButton/>
       <form onSubmit={(ev)=>{ev.preventDefault(); processUpdates()}}>
         <ModalBody pb={6}>
-          <h1>Hey</h1>
+        <Table>
+            <Thead>
+              <Tr>Town Maps</Tr>
+            </Thead>
+            <Tbody>
+            {allAvatars.map((avatar: SpriteSheetInfo) => (
+                <Tr key={avatar.spriteName}>
+                  <Td>
+                    <Text>{avatar.spriteName}</Text>
+                    <Button marginRight={10} marginTop={2} onClick={() => setNewAvatar(avatar)}>
+                      View
+                    </Button>
+                    <Button onClick={() => processUpdates()} marginTop={2}>
+                      Apply
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+              </Tbody>
+              </Table>
         </ModalBody>
 
         <ModalFooter>
-          <FormControl isRequired>
-              <FormLabel htmlFor="updatePassword">Town Update Password</FormLabel>
-                <Input data-testid="updatePassword" id="updatePassword" placeholder="Password" name="password" type="password" value={roomUpdatePassword} onChange={(e) => setRoomUpdatePassword(e.target.value)} />
-          </FormControl>
-          <Button data-testid='updatebutton' colorScheme="blue" mr={3} value="update" name='action2' onClick={()=>processUpdates()}>
-          Update
-          </Button>
           <Button onClick={closeSettings}>Cancel</Button>
          </ModalFooter>
       </form>

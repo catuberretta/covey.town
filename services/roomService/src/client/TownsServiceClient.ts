@@ -1,8 +1,8 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import assert from 'assert';
-import { UserLocation, CoveyTownMapInfo } from '../CoveyTypes';
+import { UserLocation, CoveyTownMapInfo, SpriteSheetInfo } from '../CoveyTypes';
 
-export type ServerPlayer = { _id: string, _userName: string, location: UserLocation };
+export type ServerPlayer = { _id: string, _userName: string, location: UserLocation, spriteSheet: SpriteSheetInfo };
 
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
@@ -80,6 +80,28 @@ export interface TownUpdateRequest {
 }
 
 /**
+ * Payload sent by the client to update a Sprite
+ * N.B., JavaScript is terrible, so:
+ * if(!isPubliclyListed) -> evaluates to true if the value is false OR undefined, use ===
+ */
+export interface SpriteUpdateRequest {
+  coveyTownID: string;
+  playerID: string
+  newSprite: SpriteSheetInfo;
+}
+
+/**
+ * Payload sent by the client to upload a File
+ * N.B., JavaScript is terrible, so:
+ * if(!isPubliclyListed) -> evaluates to true if the value is false OR undefined, use ===
+ */
+export interface FileUploadRequest {
+  coveyTownID: string;
+  coveyTownPassword: string;
+  file: FormData;
+}
+
+/**
  * Envelope that wraps any response from the server
  */
 export interface ResponseEnvelope<T> {
@@ -130,6 +152,11 @@ export default class TownsServiceClient {
     return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
   }
 
+  async updateSprite(requestData: SpriteUpdateRequest): Promise<void> {
+    const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>('/players', requestData);
+    return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
+  }
+
   async deleteTown(requestData: TownDeleteRequest): Promise<void> {
     const responseWrapper = await this._axios.delete<ResponseEnvelope<void>>(`/towns/${requestData.coveyTownID}/${requestData.coveyTownPassword}`);
     return TownsServiceClient.unwrapOrThrowError(responseWrapper, true);
@@ -142,6 +169,11 @@ export default class TownsServiceClient {
 
   async joinTown(requestData: TownJoinRequest): Promise<TownJoinResponse> {
     const responseWrapper = await this._axios.post('/sessions', requestData);
+    return TownsServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async uploadFile(requestData: FormData): Promise<CoveyTownMapInfo> {
+    const responseWrapper = await this._axios.post('/uploads', requestData);
     return TownsServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
