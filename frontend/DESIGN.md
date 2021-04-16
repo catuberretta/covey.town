@@ -5,11 +5,11 @@ A DESIGN.md document that includes documentation of your design (using CRC cards
 CRC Cards – Documenting our design 
 
 | Class Name: TownMaps                                                |
-| ----------------------- | ----------------------------------------- |
+| :-----------------------: | :-----------------------------------------:|
 | State: defaultMap, allTownMaps                                      |
-| ----------------------- | ----------------------------------------- |
+| :-----------------------: | :-----------------------------------------:|
 | Responsibilities        | Collaborators                             |
-| ----------------------- | ----------------------------------------- |
+| :-----------------------: | :-----------------------------------------: |
 | Keeps track of users uploading their own maps or using the default maps.    | WorldMap |
 
 
