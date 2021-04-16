@@ -181,24 +181,24 @@ export async function townCreateHandler(
   };
 }
 
-export async function townCreateUploadedMap(
-  requestData: MapUploadRequest,
-): Promise<ResponseEnvelope<CoveyTownMapInfo>> {
-  if (requestData.filePath.length === 0 || requestData.fileName.length === 0) {
-    return {
-      isOK: false,
-      message: 'Filename and Filepath must be specified',
-    };
-  }
-  return {
-    isOK: true,
-    response: {
-      mapName: requestData.fileType,
-      loadImg: 'tuxmon-sample-32px-extruded.png',
-      mapJSON: requestData.filePath,
-    },
-  };
-}
+// export async function townCreateUploadedMap(
+//   requestData: MapUploadRequest,
+// ): Promise<ResponseEnvelope<CoveyTownMapInfo>> {
+//   if (requestData.filePath.length === 0 || requestData.fileName.length === 0) {
+//     return {
+//       isOK: false,
+//       message: 'Filename and Filepath must be specified',
+//     };
+//   }
+//   return {
+//     isOK: true,
+//     response: {
+//       mapName: requestData.fileType,
+//       loadImg: 'tuxmon-sample-32px-extruded.png',
+//       mapJSON: requestData.filePath,
+//     },
+//   };
+// }
 
 export async function townDeleteHandler(
   requestData: TownDeleteRequest,

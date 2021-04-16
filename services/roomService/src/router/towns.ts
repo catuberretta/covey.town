@@ -6,7 +6,6 @@ import io from 'socket.io';
 import {
   playerUpdateHandler,
   townCreateHandler,
-  townCreateUploadedMap,
   townDeleteHandler,
   townJoinHandler,
   townListHandler,
@@ -138,19 +137,19 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   // });
 
   // app.post('/uploads', async (req, res) => {
-    // try {
-    //   const result = await townCreateUploadedMap({
-    //     fileName: req.file.filename,
-    //     filePath: req.file.path,
-    //     fileType: 'Uploaded Map',
-    //   });
-    //   res.status(StatusCodes.OK).json(result);
-    // } catch (err) {
-    //   logError(err);
-    //   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-    //     message: 'Internal server error, please see log in server for more details',
-    //   });
-    // }
+  // try {
+  //   const result = await townCreateUploadedMap({
+  //     fileName: req.file.filename,
+  //     filePath: req.file.path,
+  //     fileType: 'Uploaded Map',
+  //   });
+  //   res.status(StatusCodes.OK).json(result);
+  // } catch (err) {
+  //   logError(err);
+  //   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+  //     message: 'Internal server error, please see log in server for more details',
+  //   });
+  // }
   // });
 
   const socketServer = new io.Server(http, { cors: { origin: '*' } });
