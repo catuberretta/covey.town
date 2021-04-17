@@ -237,9 +237,18 @@ export async function playerUpdateHandler(
   };
 }
 
-export async function updateMapsHandler(requestData: CoveyTownMapInfo): Promise<void> {
+export async function updateMapsHandler(
+  requestData: CoveyTownMapInfo,
+): Promise<ResponseEnvelope<Record<string, null>>> {
   const townsStore = CoveyTownsStore.getInstance();
-  townsStore.addTownMap(requestData);
+  const success = townsStore.addTownMap(requestData);
+  return {
+    isOK: success,
+    response: {},
+    message: !success
+      ? 'Invalid update values specified. Please double check your file.'
+      : undefined,
+  };
 }
 
 /**

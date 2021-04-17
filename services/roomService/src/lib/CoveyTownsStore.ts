@@ -47,8 +47,9 @@ export default class CoveyTownsStore {
     return this._townMaps;
   }
 
-  addTownMap(newMap: CoveyTownMapInfo): void {
+  addTownMap(newMap: CoveyTownMapInfo): boolean {
     this._townMaps.push(newMap);
+    return true;
   }
 
   getControllerForTown(coveyTownID: string): CoveyTownController | undefined {

@@ -127,31 +127,49 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Upload a file
    */
-  // const fileUpload = require('express-fileupload');
   app.use(fileupload());
 
   app.post('/uploads', BodyParser.json(), async (req, res) => {
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).send('No files were uploaded.');
+    try {
+      if (!req.files || Object.keys(req.files).length === 0) {
+        // return res.status(400).send('No files were uploaded.');
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: 'No files were uploaded.',
+        });
+      } else {
+        // Get file
+        const uploadedFile = req.files.uploaded_file as fileupload.UploadedFile;
+        const fileName = uploadedFile.name;
+
+        // Check file extension, make sure file is JSON
+        if (fileName.substring(fileName.length - 4, fileName.length) !== 'json') {
+          res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Incorrect file type. Must be a JSON file.',
+          });
+        } else {
+          // Make path
+          const actualPath = path.join(__dirname, '../../../../');
+          const uploadPath = `${actualPath}frontend/public/assets/tilemaps/${fileName}`;
+
+          // Move to right path
+          uploadedFile.mv(uploadPath);
+
+          const newMap = {
+            mapName: fileName.substring(0, fileName.length - 5),
+            loadImg: 'tuxmon-sample-32px-extruded.png',
+            mapJSON: fileName,
+          };
+
+          const result = await updateMapsHandler(newMap);
+          res.status(StatusCodes.OK).json(result);
+        }
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
     }
-
-    // Get file
-    const uploadedFile = req.files.uploaded_file as fileupload.UploadedFile;
-
-    // Make path
-    const actualPath = path.join(__dirname, '../../../../');
-    const uploadPath = `${actualPath}frontend/public/assets/tilemaps/${uploadedFile.name}`;
-
-    const newMap = {
-      mapName: 'Upload',
-      loadImg: 'tuxmon-sample-32px-extruded.png',
-      mapJSON: uploadedFile.name,
-    };
-
-    updateMapsHandler(newMap);
-
-    uploadedFile.mv(uploadPath);
-    return res.status(StatusCodes.OK).json('Success!');
   });
 
   const socketServer = new io.Server(http, { cors: { origin: '*' } });

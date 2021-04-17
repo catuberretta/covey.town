@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import assert from 'assert';
 import { ServerPlayer, SpriteSheetInfo } from './Player';
 import { CoveyTownMapInfo } from './Town';
+ 
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
  */
@@ -175,13 +176,14 @@ export default class TownsServiceClient {
   }
 
   async joinTown(requestData: TownJoinRequest): Promise<TownJoinResponse> {
-    const responseWrapper = await this._axios.post('/sessions', requestData);
+    const responseWrapper = await this._axios.post<ResponseEnvelope<TownJoinResponse>>('/sessions', requestData);
     return TownsServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async uploadFile(requestData: FormData): Promise<CoveyTownMapInfo> {
-    const responseWrapper = await this._axios.post('/uploads', requestData);
+  async uploadFile(requestData: FormData): Promise<void> {
+    const responseWrapper = await this._axios.post<ResponseEnvelope<void>>('/uploads', requestData);
     return TownsServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
 }
+ 
