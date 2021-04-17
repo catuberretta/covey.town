@@ -494,17 +494,19 @@ export default function WorldMap(): JSX.Element {
     gameScene?.updateSprite(currentSpriteSheet);
   }, [players, deepPlayers, currentTownMap, currentSpriteSheet,gameScene]);
 
-  const renderTownMaps = () => {
-    if (userName === currentTownHost) {
-       <TownMaps/>
-  }
-  
+  function renderTownMaps()  {
+    console.log('Username', userName);
+    console.log('Town host', currentTownHost);
 
+    if (userName === currentTownHost) {
+       return (<TownMaps/>);
+  }
+  return <div><h1>Hi</h1></div>
   }
 
   return <Grid templateColumns="repeat(2, 1fr)">         
   <div id="map-container"/>
-  {renderTownMaps}
+  {renderTownMaps()}
   </Grid>;
  
 

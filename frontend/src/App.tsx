@@ -106,6 +106,7 @@ function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyApp
     case 'doConnect':
       nextState.sessionToken = update.data.sessionToken;
       nextState.myPlayerID = update.data.myPlayerID;
+      nextState.currentTownHost = update.data.townHost;
       nextState.currentSpriteSheet = update.data.spriteSheet;
       nextState.currentTownFriendlyName = update.data.townFriendlyName;
       nextState.currentTownID = update.data.townID;
