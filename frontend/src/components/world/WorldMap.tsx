@@ -1,11 +1,12 @@
-import { Grid, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Grid,Tab,TabList,TabPanel,TabPanels,Tabs,Text } from '@chakra-ui/react';
 import Phaser from 'phaser';
-import React, { useEffect, useState } from 'react';
-import Player, { SpriteSheetInfo, UserLocation } from '../../classes/Player';
+import React,{ useEffect,useState } from 'react';
+import Player,{ SpriteSheetInfo,UserLocation } from '../../classes/Player';
 import { CoveyTownMapInfo } from '../../classes/Town';
 import Video from '../../classes/Video/Video';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import TownMaps from '../townMaps/TownMaps';
+import HostMaps from '../townMaps/HostMaps';
 
 // https://medium.com/@michaelwesthadley/modular-game-worlds-in-phaser-3-tilemaps-1-958fc7e6bbd6
 class CoveyGameScene extends Phaser.Scene {
@@ -536,12 +537,14 @@ export default function WorldMap(): JSX.Element {
         <TabList>
           <Tab>Home</Tab>
           <Tab>Map</Tab>
+          <Tab>Your Towns</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
             <Text>Welcome to Covey Town! Have fun! </Text>
           </TabPanel>
           <TabPanel>{renderTownMaps()}</TabPanel>
+          <TabPanel><HostMaps/></TabPanel>
         </TabPanels>
       </Tabs>
     </Grid>

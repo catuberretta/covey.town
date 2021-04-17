@@ -11,7 +11,7 @@ export type SpriteSheetInfo =
   spritePNG: string, 
 };
 
-export type CoveyTownList = { friendlyName: string; coveyTownID: string; currentOccupancy: number; maximumOccupancy: number }[];
+export type CoveyTownList = { friendlyName: string; coveyTownID: string; currentOccupancy: number; maximumOccupancy: number, coveyTownHost: string, coveyTownMap: CoveyTownMapInfo }[];
 export type CoveyTownMapInfo = { mapName: string, loadImg: string, mapJSON: string };
 export type CoveyMapList = CoveyTownMapInfo[];
 

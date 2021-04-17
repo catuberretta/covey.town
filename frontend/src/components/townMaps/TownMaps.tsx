@@ -17,6 +17,8 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import { CoveyTownMapInfo } from '../../classes/Town';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
+import UploadGuide from './UploadGuide';
+
 
 export default function TownMaps(): JSX.Element {
   const defaultMap = {
@@ -132,7 +134,7 @@ export default function TownMaps(): JSX.Element {
 
         <FormControl isRequired>
           <FormLabel htmlFor='updatePassword'>Town Update Password</FormLabel>
-          <Input
+          <Input mt={8} mb={2}
             data-testid='updatePassword'
             id='updatePassword'
             placeholder='Password'
@@ -151,16 +153,7 @@ export default function TownMaps(): JSX.Element {
       <Heading as="h5" size="sm">
           You can also upload your own map! 
           </Heading>
-          <Text>First,{' '}
-          <Link color='teal.500' isExternal href='/assets/tilemaps/base-town.json'>
-            download the base map.
-          </Link>
-          , make your edits using{' '}
-          <Link color='teal.500' isExternal href='https://www.mapeditor.org/'>
-            Tiled
-          </Link>
-          , save and then upload the file.
-        </Text>
+        <UploadGuide/>
 
         <Input type='file' name='uploaded_file' onChange={event => changeHandler(event)} />
         <Button onClick={handleSubmission} marginTop={2}>

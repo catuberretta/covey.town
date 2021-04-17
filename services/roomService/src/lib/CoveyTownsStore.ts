@@ -64,6 +64,8 @@ export default class CoveyTownsStore {
         friendlyName: townController.friendlyName,
         currentOccupancy: townController.occupancy,
         maximumOccupancy: townController.capacity,
+        coveyTownMap: townController.coveyTownMap,
+        coveyTownHost: townController.townHost,
       }));
   }
 
@@ -85,7 +87,7 @@ export default class CoveyTownsStore {
     townMap?: CoveyTownMapInfo,
   ): boolean {
     const existingTown = this.getControllerForTown(coveyTownID);
-    if (existingTown && passwordMatches(coveyTownPassword, existingTown.townUpdatePassword)) {
+    if (existingTown && (passwordMatches(coveyTownPassword, existingTown.townUpdatePassword) || existingTown.townHost === coveyTownPassword)) {
       if (friendlyName !== undefined) {
         if (friendlyName.length === 0) {
           return false;
