@@ -2,7 +2,6 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import assert from 'assert';
 import { ServerPlayer, SpriteSheetInfo } from './Player';
 import { CoveyTownMapInfo } from './Town';
-import { StringMappingType } from 'typescript';
  
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware

@@ -1,5 +1,4 @@
-import { Table, TableCaption, Tbody, Td, Text, Th, Thead, Tr, useToast, Button, Box, IconButton, SimpleGrid,
-    AlertIcon, } from '@chakra-ui/react';
+import { Table, TableCaption, Tbody, Td, Text, Th, Thead, Tr, useToast, Button, Box, IconButton, SimpleGrid } from '@chakra-ui/react';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons'
 import React, { useCallback, useEffect, useState } from 'react';
 import { CoveyTownInfo } from '../../classes/TownsServiceClient';
@@ -14,7 +13,7 @@ export default function HostMaps(): JSX.Element {
     mapJSON: 'tuxemon-town.json',
   };
 
-  const { apiClient, userName, currentTownID } = useCoveyAppState();
+  const { apiClient, userName } = useCoveyAppState();
   const [hostTowns, setHostTowns] = useState<CoveyTownInfo[]>();
   const [newMap, setNewMap] = useState(defaultMap);
   const initalSelectedTown: string[] = [];
@@ -36,7 +35,7 @@ export default function HostMaps(): JSX.Element {
     apiClient.listTowns().then(towns => {
       setHostTowns(towns.towns.filter(town => town.coveyTownHost === userName));
     });
-  }, [setHostTowns, apiClient]);
+  }, [setHostTowns, apiClient, userName]);
 
   useEffect(() => {
     updateHostTowns();
@@ -78,7 +77,6 @@ const handleRemove = (townID: string) => {
 }
 
   const updateTowns = () => {
-      console.log('at update Towns');
     selectedTowns.map(town => processUpdates(town));
 }
 
