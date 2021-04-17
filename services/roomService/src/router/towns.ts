@@ -1,6 +1,6 @@
 import BodyParser from 'body-parser';
 import { Express } from 'express';
-import fileUpload from 'express-fileupload';
+import fileupload from 'express-fileupload';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
 import * as path from 'path';
@@ -128,7 +128,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    * Upload a file
    */
   // const fileUpload = require('express-fileupload');
-  app.use(fileUpload());
+  app.use(fileupload());
 
   app.post('/uploads', BodyParser.json(), async (req, res) => {
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -136,7 +136,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
     }
 
     // Get file
-    const uploadedFile = req.files.uploaded_file as fileUpload.UploadedFile;
+    const uploadedFile = req.files.uploaded_file as fileupload.UploadedFile;
 
     // Make path
     const actualPath = path.join(__dirname, '../../../../');

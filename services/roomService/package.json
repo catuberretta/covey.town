@@ -25,6 +25,7 @@
   },
   "keywords": [],
   "devDependencies": {
+    "@types/express-fileupload": "^1.1.6",
     "@types/jest": "^26.0.22",
     "@types/node": "^14.14.13",
     "@typescript-eslint/eslint-plugin": "^4.13.0",
