@@ -117,7 +117,7 @@ const handleRemove = (townID: string) => {
                   <SimpleGrid columns={2}>
                     <Text>{town.mapName}</Text>
                     <Button marginRight={2} onClick={() => setNewMap(town)}>
-                      View
+                      Select
                     </Button>
                   </SimpleGrid>
                 </Td>
