@@ -127,7 +127,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Upload a file
    */
-  const fileUpload = require('express-fileupload');
+  // const fileUpload = require('express-fileupload');
   app.use(fileUpload());
 
   app.post('/uploads', BodyParser.json(), async (req, res) => {
