@@ -99,7 +99,7 @@ const handleRemove = (townID: string) => {
             {hostTowns?.map(town => (
               <Tr key={town.coveyTownID}>
                 <Td role='cell'>{town.friendlyName}</Td>
-                <Td role='cell'>{town.coveyTownMap.mapName}</Td>
+                <Td role='cell'>{town.coveyTownMap?.mapName}</Td>
                 <Td role='cell'>
                 <IconButton size="sm" icon={<AddIcon />} aria-label="Add map" colorScheme="green" onClick={() => handleAdd(town.coveyTownID)}>Add</IconButton>
                 <IconButton size="sm" icon={<MinusIcon />} aria-label="Delete map" colorScheme="red" onClick={() => handleRemove(town.coveyTownID)}>Remove</IconButton>

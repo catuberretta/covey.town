@@ -118,8 +118,8 @@ export interface ResponseEnvelope<T> {
 }
 
 export type CoveyTownInfo = {
-  coveyTownHost: string;
-  coveyTownMap: CoveyTownMapInfo;
+  coveyTownHost?: string;
+  coveyTownMap?: CoveyTownMapInfo;
   friendlyName: string;
   coveyTownID: string;
   currentOccupancy: number;
