@@ -1,31 +1,29 @@
-import Express from 'express';
+import assert from 'assert';
 import CORS from 'cors';
+import Express from 'express';
 import http from 'http';
 import { nanoid } from 'nanoid';
-import assert from 'assert';
 import { AddressInfo } from 'net';
 import { CoveyTownMapInfo } from '../CoveyTypes';
-
-import TownsServiceClient, { TownListResponse } from './TownsServiceClient';
 import addTownRoutes from '../router/towns';
+import TownsServiceClient, { TownListResponse } from './TownsServiceClient';
 
 type TestTownData = {
-  friendlyName: string, coveyTownID: string,
-  isPubliclyListed: boolean, townUpdatePassword: string
+  friendlyName: string;
+  coveyTownID: string;
+  isPubliclyListed: boolean;
+  townUpdatePassword: string;
   townMap: CoveyTownMapInfo;
 };
 
 function expectTownListMatches(towns: TownListResponse, town: TestTownData) {
   const matching = towns.towns.find(townInfo => townInfo.coveyTownID === town.coveyTownID);
   if (town.isPubliclyListed) {
-    expect(matching)
-      .toBeDefined();
+    expect(matching).toBeDefined();
     assert(matching);
-    expect(matching.friendlyName)
-      .toBe(town.friendlyName);
+    expect(matching.friendlyName).toBe(town.friendlyName);
   } else {
-    expect(matching)
-      .toBeUndefined();
+    expect(matching).toBeUndefined();
   }
 }
 
@@ -33,18 +31,29 @@ describe('TownsServiceAPIREST', () => {
   let server: http.Server;
   let apiClient: TownsServiceClient;
 
-  async function createTownForTesting(friendlyNameToUse?: string, isPublic = false): Promise<TestTownData> {
-    const friendlyName = friendlyNameToUse !== undefined ? friendlyNameToUse :
-      `${isPublic ? 'Public' : 'Private'}TestingTown=${nanoid()}`;
+  async function createTownForTesting(
+    friendlyNameToUse?: string,
+    isPublic = false,
+  ): Promise<TestTownData> {
+    const userName = nanoid();
+    const friendlyName =
+      friendlyNameToUse !== undefined
+        ? friendlyNameToUse
+        : `${isPublic ? 'Public' : 'Private'}TestingTown=${nanoid()}`;
     const ret = await apiClient.createTown({
       friendlyName,
       isPubliclyListed: isPublic,
+      playerName: userName,
     });
 
     return {
       friendlyName,
       isPubliclyListed: isPublic,
-      townMap: { mapName: 'Tuxedo Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'tuxemon-town.json' },
+      townMap: {
+        mapName: 'Tuxedo Town',
+        loadImg: 'tuxmon-sample-32px-extruded.png',
+        mapJSON: 'tuxemon-town.json',
+      },
       coveyTownID: ret.coveyTownID,
       townUpdatePassword: ret.coveyTownPassword,
     };
@@ -68,9 +77,7 @@ describe('TownsServiceAPIREST', () => {
     it('Allows for multiple towns with the same friendlyName', async () => {
       const firstTown = await createTownForTesting();
       const secondTown = await createTownForTesting(firstTown.friendlyName);
-      expect(firstTown.coveyTownID)
-        .not
-        .toBe(secondTown.coveyTownID);
+      expect(firstTown.coveyTownID).not.toBe(secondTown.coveyTownID);
     });
     it('Prohibits a blank friendlyName', async () => {
       try {
@@ -94,7 +101,6 @@ describe('TownsServiceAPIREST', () => {
       expectTownListMatches(towns, pubTown2);
       expectTownListMatches(towns, privTown1);
       expectTownListMatches(towns, privTown2);
-
     });
     it('Allows for multiple towns with the same friendlyName', async () => {
       const pubTown1 = await createTownForTesting(undefined, true);
@@ -157,7 +163,11 @@ describe('TownsServiceAPIREST', () => {
     });
   });
   describe('CoveyTownUpdateAPI', () => {
-    const newMap: CoveyTownMapInfo = { mapName: 'Rose Town', loadImg: 'tuxmon-sample-32px-extruded.png', mapJSON: 'rose-town.json'};
+    const newMap: CoveyTownMapInfo = {
+      mapName: 'Rose Town',
+      loadImg: 'tuxmon-sample-32px-extruded.png',
+      mapJSON: 'rose-town.json',
+    };
 
     it('Checks the password before updating any values', async () => {
       const pubTown1 = await createTownForTesting(undefined, true);
@@ -217,38 +227,6 @@ describe('TownsServiceAPIREST', () => {
     });
   });
 
-  // TO DO
-  // describe('CoveySpriteUpdateApi', () => {
-  //   const avatar = {
-  //     spriteName: 'Misa - Dark hair', 
-  //     spritePNG: 'atlas-alternate.png'
-  //   };
-  //   it('Updates just the player,s sprite as requested', async () => {
-  //     console.log('lets test covey sprite update');
-  //     const pubTown1 = await createTownForTesting('testTown', true);
-  //     const player = new Player('test player');
-  //     const player2 = new Player('second player');
-  //     const join = await apiClient.joinTown({
-  //       userName: player.userName,
-  //       coveyTownID: pubTown1.coveyTownID,
-  //     });
-  //     console.log(player.id);
-  //     console.log(join.coveyUserID);
-  //     console.log(join.currentPlayers);
-  //     const join2 = await apiClient.joinTown({
-  //       userName: player2.userName,
-  //       coveyTownID: pubTown1.coveyTownID,
-  //     });
-  //     const res = await apiClient.updateSprite({
-  //       coveyTownID: pubTown1.coveyTownID,
-  //       playerID: player.id,
-  //       newSprite: avatar,
-  //     });
-  //     expect(player.spriteSheet)
-  //     .toBe(avatar);
-  //   });
-  // });
-
   describe('CoveyMemberAPI', () => {
     it('Throws an error if the town does not exist', async () => {
       await createTownForTesting(undefined, true);
@@ -271,20 +249,15 @@ describe('TownsServiceAPIREST', () => {
         userName: nanoid(),
         coveyTownID: pubTown1.coveyTownID,
       });
-      expect(res.coveySessionToken)
-        .toBeDefined();
-      expect(res.coveyUserID)
-        .toBeDefined();
+      expect(res.coveySessionToken).toBeDefined();
+      expect(res.coveyUserID).toBeDefined();
 
       const res2 = await apiClient.joinTown({
         userName: nanoid(),
         coveyTownID: privTown1.coveyTownID,
       });
-      expect(res2.coveySessionToken)
-        .toBeDefined();
-      expect(res2.coveyUserID)
-        .toBeDefined();
-
+      expect(res2.coveySessionToken).toBeDefined();
+      expect(res2.coveyUserID).toBeDefined();
     });
   });
 });

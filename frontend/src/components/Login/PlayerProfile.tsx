@@ -51,7 +51,6 @@ const PlayerProfile: React.FunctionComponent = () => {
     video?.unPauseGame();
   }, [onClose, video]);
 
-
   const toast = useToast();
   
   const processUpdates = async () => {

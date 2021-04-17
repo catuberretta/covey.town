@@ -85,6 +85,7 @@ function wrappedTownSelection() {
     nearbyPlayers: { nearbyPlayers: [] },
     players: [],
     myPlayerID: '',
+    currentTownHost: '',
     currentSpriteSheet: { spriteName: '', spritePNG: '' },
     currentTownID: '',
     currentTownIsPubliclyListed: false,
@@ -197,16 +198,18 @@ describe('Town Selection - depends on Part 1 passing', () => {
           const townID = nanoid();
           const roomPassword = nanoid();
           const townName = nanoid();
+          const userName = nanoid();
           await createTownWithOptions({
             townName,
-            userName: nanoid(),
+            userName,
             townID,
             roomPassword
           })
           await waitFor(() => expect(mockCreateTown)
             .toBeCalledWith({
               friendlyName: townName,
-              isPubliclyListed: true
+              isPubliclyListed: true,
+              playerName: userName,
             }));
         });
 
@@ -214,9 +217,10 @@ describe('Town Selection - depends on Part 1 passing', () => {
           const townID = nanoid();
           const roomPassword = nanoid();
           const townName = nanoid();
+          const userName = nanoid();
           await createTownWithOptions({
             townName,
-            userName: nanoid(),
+            userName,
             townID,
             roomPassword,
             togglePublicBox: true
@@ -224,7 +228,8 @@ describe('Town Selection - depends on Part 1 passing', () => {
           await waitFor(() => expect(mockCreateTown)
             .toBeCalledWith({
               friendlyName: townName,
-              isPubliclyListed: false
+              isPubliclyListed: false,
+              playerName: userName,
             }));
 
         });
@@ -233,9 +238,10 @@ describe('Town Selection - depends on Part 1 passing', () => {
           const townID = nanoid();
           const roomPassword = nanoid();
           const townName = nanoid();
+          const userName = nanoid();
           await createTownWithOptions({
             townName,
-            userName: nanoid(),
+            userName,
             townID,
             roomPassword,
             togglePublicBox: true
@@ -243,7 +249,8 @@ describe('Town Selection - depends on Part 1 passing', () => {
           await waitFor(() => expect(mockCreateTown)
             .toBeCalledWith({
               friendlyName: townName,
-              isPubliclyListed: false
+              isPubliclyListed: false,
+              playerName: userName,
             }));
           await waitFor(() => expect(mockToast)
             .toBeCalledWith(expect.objectContaining({
@@ -287,15 +294,17 @@ describe('Town Selection - depends on Part 1 passing', () => {
         it('displays an error toast "Unable to connect to Towns Service" if an error occurs in createTown', async () => {
           const errorMessage = `Oops#${nanoid()}`;
           const townName = nanoid();
+          const userName = nanoid();
           await createTownWithOptions({
             townName,
-            userName: nanoid(),
+            userName,
             errorMessage
           })
           await waitFor(() => expect(mockCreateTown)
             .toBeCalledWith({
               friendlyName: townName,
-              isPubliclyListed: true
+              isPubliclyListed: true,
+              playerName: userName,
             }));
           await waitFor(() => expect(mockToast)
             .toBeCalledWith({

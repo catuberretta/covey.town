@@ -13,10 +13,10 @@ import {
     Tr,
     useToast,
   } from '@chakra-ui/react';
-  import React, { useState } from 'react';
+  import React, { useState, useEffect, useCallback } from 'react';
   import { CoveyTownMapInfo } from '../../classes/Town';
   import useCoveyAppState from '../../hooks/useCoveyAppState';
-  
+
   export default function TownMaps(): JSX.Element {
 
     const defaultMap = {
@@ -24,20 +24,25 @@ import {
       loadImg: 'tuxmon-sample-32px-extruded.png',
       mapJSON: 'tuxemon-town.json',
     };
-    const roseTown = {
-      mapName: 'Rose Town',
-      loadImg: 'tuxmon-sample-32px-extruded.png',
-      mapJSON: 'rose-town.json',
-    };
-    const allTownMaps: Array<CoveyTownMapInfo> = [defaultMap, roseTown];
-    const mapUpload: FormData = new FormData();
     
+    const toast = useToast();
     const [newMap, setNewMap] = useState(defaultMap);
     const [selectedFile, setSelectedFile] = useState<File>();
     const { apiClient, currentTownID } = useCoveyAppState();
+    const [currentMaps, setCurrentTownMaps] = useState<CoveyTownMapInfo[]>();
     const [roomUpdatePassword, setRoomUpdatePassword] = useState<string>('');
-  
-    const toast = useToast();
+    const mapUpload: FormData = new FormData();
+
+    const updateTownMaps = useCallback(() => {
+      apiClient.listTowns()
+        .then((towns) => {
+          setCurrentTownMaps(towns.maps);
+        })
+    }, [setCurrentTownMaps, apiClient]);
+
+    useEffect(() => {
+      updateTownMaps();
+    }, [updateTownMaps]);
   
     const processUpdates = async (action: string) => {
       if (action === 'chooseMap') {
@@ -63,12 +68,7 @@ import {
         }
       } else {
         try {
-          const uploadMapInfo = await apiClient.uploadFile(mapUpload);
-          await apiClient.updateTown({
-            coveyTownID: currentTownID,
-            coveyTownPassword: roomUpdatePassword,
-            townMap: uploadMapInfo,
-          });
+          await apiClient.uploadFile(mapUpload);
           toast({
             title: 'Your file has been uploaded.',
             description: 'To use your file, select it from the maps above.',
@@ -98,7 +98,7 @@ import {
           processUpdates('uploadFile');
         }
       };
-    
+
     return (
       <Box m={10}>
         <Text mb={10}>You are currently using a default map. Would you like to change your map?</Text>
@@ -114,7 +114,7 @@ import {
               <Tr>Town Maps</Tr>
             </Thead>
             <Tbody>
-              {allTownMaps.map((town: CoveyTownMapInfo) => (
+              {currentMaps?.map((town: CoveyTownMapInfo) => (
                 <Tr key={town.mapName}>
                   <Td>
                     <Text>{town.mapName}</Text>

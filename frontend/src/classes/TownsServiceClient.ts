@@ -19,6 +19,8 @@ export interface TownJoinRequest {
 export interface TownJoinResponse {
   /** Unique ID that represents this player * */
   coveyUserID: string;
+  /** Username for town host (creator of town) * */
+  townHost: string;
   /** Sprite Sheet for player * */
   currentSpriteSheet: SpriteSheetInfo;
   /** Secret token that this player should use to authenticate
@@ -43,6 +45,7 @@ export interface TownJoinResponse {
 export interface TownCreateRequest {
   friendlyName: string;
   isPubliclyListed: boolean;
+  playerName: string;
 }
 
 /**
@@ -58,6 +61,7 @@ export interface TownCreateResponse {
  */
 export interface TownListResponse {
   towns: CoveyTownInfo[];
+  maps?: CoveyTownMapInfo[];
 }
 
 /**

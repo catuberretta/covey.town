@@ -38,6 +38,7 @@ function wrappedTownSettings() {
     nearbyPlayers: { nearbyPlayers: [] },
     players: [],
     myPlayerID: '',
+    currentTownHost: '',
     currentSpriteSheet: { spriteName: '', spritePNG: '' },
     currentTownID: '',
     currentTownFriendlyName: '',

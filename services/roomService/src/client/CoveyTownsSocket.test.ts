@@ -24,6 +24,7 @@ describe('TownServiceApiSocket', () => {
     friendlyNameToUse?: string,
     isPublic = false,
   ): Promise<TestTownData> {
+    const userName = nanoid();
     const friendlyName =
       friendlyNameToUse !== undefined
         ? friendlyNameToUse
@@ -31,6 +32,7 @@ describe('TownServiceApiSocket', () => {
     const ret = await apiClient.createTown({
       friendlyName,
       isPubliclyListed: isPublic,
+      playerName: userName,
     });
     return {
       friendlyName,

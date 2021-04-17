@@ -1,14 +1,24 @@
 A FEATURE.md document that describes the final version of your use cases
 
-The three main features defined in our project scope is as follows:
-1.	Uploading own files for a custom avatar and map
-2.	Browse pre-made avatars so to choose different avatars
-3.	Customize maps so only a specific user can upload and use custom maps
+The three features are as follows:
 
-To upload your file for a custom avatar, simply click on…
+1. Browse pre-made avatars so to choose a different avatar for your player
+2. Browse pre-made maps so to choose a different map for your room
+3. Host permissions: only the town creator can upload and use custom maps for the town
 
-To upload files for custom map, you would first have to create a tile set through using the app Tiled that is 32x32. To upload the map, simply create a new rom and click on the "apply" button and upload the map json file.
+Users are able to browse through the avatars in the Player Profile tab, at the bottom left. Simply
+open the Player Profile, select View and Update on whichever avatar you wish to have.
 
-Users are able to browse through the avatars in...
+Users are also able to browse through pre-made maps and change the town's map. However, only the
+town creator, aka the "host" will be able to see those options and change the map.
 
-The last feature we worked on is the customizability, meaning that we only want a specific user to upload and use the specific map through entering the password for the specific town. Only the user that created the town will know what the password is, so this will be able to prevent potential chaos with constantly changing the map from happening. 
+To select a new map, simply go to the right sidebar, and you will see a list of maps to choose from.
+Hit view, and then update but make sure you have the password put in first. The map will render
+immiedately.
+
+To upload files for custom map, you would first have to create download our given Basemap JSON file
+and given basemap tileset, both linked in the section titled Upload Map. To edit the map, open it
+with the Tiled application and make sure you pay special attention to the layers. To upload the map,
+simply create a new town and click on the "upload" button and upload the map json file. Once you do
+so, you will have to disconnect and rejoin the room, where you will see your uploaded map listed
+with the map options.

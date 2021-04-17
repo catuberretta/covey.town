@@ -82,8 +82,11 @@ export default class CoveyTownController {
 
   private _capacity: number;
 
-  constructor(friendlyName: string, isPubliclyListed: boolean) {
+  private _townHost: string;
+
+  constructor(friendlyName: string, isPubliclyListed: boolean, playerName: string) {
     this._coveyTownID = (process.env.DEMO_TOWN_ID === friendlyName ? friendlyName : friendlyNanoID());
+    this._townHost = playerName;
     this._capacity = 50;
     this._townUpdatePassword = nanoid(24);
     this._isPubliclyListed = isPubliclyListed;
@@ -119,6 +122,13 @@ export default class CoveyTownController {
   updateTownMap(newMap: CoveyTownMapInfo): void {
     this._townMap = newMap;
     this._listeners.forEach((listener) => listener.onMapUpdated(newMap));
+  }
+
+  /**
+   * Returns the host of this town
+   */
+  get townHost(): string {
+    return this._townHost;
   }
 
   /**

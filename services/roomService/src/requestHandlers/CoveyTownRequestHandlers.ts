@@ -1,6 +1,12 @@
 import assert from 'assert';
 import { Socket } from 'socket.io';
-import { CoveyTownList, CoveyTownMapInfo, SpriteSheetInfo, UserLocation } from '../CoveyTypes';
+import {
+  CoveyMapList,
+  CoveyTownList,
+  CoveyTownMapInfo,
+  SpriteSheetInfo,
+  UserLocation,
+} from '../CoveyTypes';
 import CoveyTownsStore from '../lib/CoveyTownsStore';
 import CoveyTownListener from '../types/CoveyTownListener';
 import Player from '../types/Player';
@@ -22,6 +28,8 @@ export interface TownJoinRequest {
 export interface TownJoinResponse {
   /** Unique ID that represents this player * */
   coveyUserID: string;
+  /** Username for town host (creator of town) * */
+  townHost: string;
   /** Sprite Sheet for player * */
   currentSpriteSheet: SpriteSheetInfo;
   /** Secret token that this player should use to authenticate
@@ -46,6 +54,7 @@ export interface TownJoinResponse {
 export interface TownCreateRequest {
   friendlyName: string;
   isPubliclyListed: boolean;
+  playerName: string;
 }
 
 /**
@@ -61,6 +70,7 @@ export interface TownCreateResponse {
  */
 export interface TownListResponse {
   towns: CoveyTownList;
+  maps: CoveyMapList;
 }
 
 /**
@@ -93,17 +103,6 @@ export interface SpriteUpdateRequest {
   coveyTownID: string;
   playerID: string;
   newSprite: SpriteSheetInfo;
-}
-
-/**
- * Payload sent by the client to create a map from upload
- * N.B., JavaScript is terrible, so:
- * if(!isPubliclyListed) -> evaluates to true if the value is false OR undefined, use ===
- */
-export interface MapUploadRequest {
-  fileName: string;
-  filePath: string;
-  fileType: string;
 }
 
 /**
@@ -142,6 +141,7 @@ export async function townJoinHandler(
     isOK: true,
     response: {
       coveyUserID: newPlayer.id,
+      townHost: coveyTownController.townHost,
       currentSpriteSheet: newPlayer.spriteSheet,
       coveySessionToken: newSession.sessionToken,
       providerVideoToken: newSession.videoToken,
@@ -157,7 +157,7 @@ export async function townListHandler(): Promise<ResponseEnvelope<TownListRespon
   const townsStore = CoveyTownsStore.getInstance();
   return {
     isOK: true,
-    response: { towns: townsStore.getTowns() },
+    response: { towns: townsStore.getTowns(), maps: townsStore.getTownMaps() },
   };
 }
 
@@ -171,7 +171,11 @@ export async function townCreateHandler(
       message: 'FriendlyName must be specified',
     };
   }
-  const newTown = townsStore.createTown(requestData.friendlyName, requestData.isPubliclyListed);
+  const newTown = townsStore.createTown(
+    requestData.friendlyName,
+    requestData.isPubliclyListed,
+    requestData.playerName,
+  );
   return {
     isOK: true,
     response: {
@@ -180,25 +184,6 @@ export async function townCreateHandler(
     },
   };
 }
-
-// export async function townCreateUploadedMap(
-//   requestData: MapUploadRequest,
-// ): Promise<ResponseEnvelope<CoveyTownMapInfo>> {
-//   if (requestData.filePath.length === 0 || requestData.fileName.length === 0) {
-//     return {
-//       isOK: false,
-//       message: 'Filename and Filepath must be specified',
-//     };
-//   }
-//   return {
-//     isOK: true,
-//     response: {
-//       mapName: requestData.fileType,
-//       loadImg: 'tuxmon-sample-32px-extruded.png',
-//       mapJSON: requestData.filePath,
-//     },
-//   };
-// }
 
 export async function townDeleteHandler(
   requestData: TownDeleteRequest,
@@ -250,6 +235,11 @@ export async function playerUpdateHandler(
       ? 'Invalid update values specified. Please double check your townID and playerID.'
       : undefined,
   };
+}
+
+export async function updateMapsHandler(requestData: CoveyTownMapInfo): Promise<void> {
+  const townsStore = CoveyTownsStore.getInstance();
+  townsStore.addTownMap(requestData);
 }
 
 /**

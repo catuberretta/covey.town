@@ -40,14 +40,16 @@ describe('CoveyTownController', () => {
   it('constructor should set the friendlyName property', () => {
     // Included in handout
     const townName = `FriendlyNameTest-${nanoid()}`;
-    const townController = new CoveyTownController(townName, false);
+    const userName = nanoid();
+    const townController = new CoveyTownController(townName, false, userName);
     expect(townController.friendlyName).toBe(townName);
   });
   describe('addPlayer', () => {
     // Included in handout
     it('should use the coveyTownID and player ID properties when requesting a video token', async () => {
       const townName = `FriendlyNameTest-${nanoid()}`;
-      const townController = new CoveyTownController(townName, false);
+      const userName = nanoid();
+      const townController = new CoveyTownController(townName, false, userName);
       const newPlayerSession = await townController.addPlayer(new Player(nanoid()));
       expect(mockGetTokenForTown).toBeCalledTimes(1);
       expect(mockGetTokenForTown).toBeCalledWith(
@@ -65,7 +67,8 @@ describe('CoveyTownController', () => {
     ];
     beforeEach(() => {
       const townName = `town listeners and events tests ${nanoid()}`;
-      testingTown = new CoveyTownController(townName, false);
+      const userName = nanoid();
+      testingTown = new CoveyTownController(townName, false, userName);
       mockListeners.forEach(mockReset);
     });
     it('should notify added listeners of player movement when updatePlayerLocation is called', async () => {
@@ -189,7 +192,8 @@ describe('CoveyTownController', () => {
     let session: PlayerSession;
     beforeEach(async () => {
       const townName = `connectPlayerSocket tests ${nanoid()}`;
-      testingTown = CoveyTownsStore.getInstance().createTown(townName, false);
+      const userName = nanoid();
+      testingTown = CoveyTownsStore.getInstance().createTown(townName, false, userName);
       mockReset(mockSocket);
       player = new Player('test player');
       session = await testingTown.addPlayer(player);

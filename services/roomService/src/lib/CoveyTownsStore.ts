@@ -16,11 +16,39 @@ export default class CoveyTownsStore {
 
   private _towns: CoveyTownController[] = [];
 
+  private defaultMap = {
+    mapName: 'Tuxedo Town',
+    loadImg: 'tuxmon-sample-32px-extruded.png',
+    mapJSON: 'tuxemon-town.json',
+  };
+
+  private roseTown = {
+    mapName: 'Rose Town',
+    loadImg: 'tuxmon-sample-32px-extruded.png',
+    mapJSON: 'rose-town.json',
+  };
+
+  private snowTown = {
+    mapName: 'Snow Town',
+    loadImg: 'tuxmon-sample-32px-extruded.png',
+    mapJSON: 'snow-town.json',
+  };
+
+  private _townMaps: CoveyTownMapInfo[] = [this.defaultMap, this.roseTown, this.snowTown];
+
   static getInstance(): CoveyTownsStore {
     if (CoveyTownsStore._instance === undefined) {
       CoveyTownsStore._instance = new CoveyTownsStore();
     }
     return CoveyTownsStore._instance;
+  }
+
+  getTownMaps(): CoveyTownMapInfo[] {
+    return this._townMaps;
+  }
+
+  addTownMap(newMap: CoveyTownMapInfo): void {
+    this._townMaps.push(newMap);
   }
 
   getControllerForTown(coveyTownID: string): CoveyTownController | undefined {
@@ -38,8 +66,12 @@ export default class CoveyTownsStore {
       }));
   }
 
-  createTown(friendlyName: string, isPubliclyListed: boolean): CoveyTownController {
-    const newTown = new CoveyTownController(friendlyName, isPubliclyListed);
+  createTown(
+    friendlyName: string,
+    isPubliclyListed: boolean,
+    playerName: string,
+  ): CoveyTownController {
+    const newTown = new CoveyTownController(friendlyName, isPubliclyListed, playerName);
     this._towns.push(newTown);
     return newTown;
   }

@@ -108,7 +108,8 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
     try {
       const newTownInfo = await apiClient.createTown({
         friendlyName: newTownName,
-        isPubliclyListed: newTownIsPublic
+        isPubliclyListed: newTownIsPublic,
+        playerName: userName,
       });
       let privateMessage = <></>;
       if (!newTownIsPublic) {

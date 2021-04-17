@@ -30,7 +30,7 @@ import Video from './classes/Video/Video';
 
 
 type CoveyAppUpdate =
-  | { action: 'doConnect'; data: { userName: string, townFriendlyName: string, townID: string, townIsPubliclyListed: boolean, townMap: CoveyTownMapInfo, sessionToken: string, myPlayerID: string, spriteSheet: SpriteSheetInfo, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
+  | { action: 'doConnect'; data: { userName: string, townHost: string, townFriendlyName: string, townID: string, townIsPubliclyListed: boolean, townMap: CoveyTownMapInfo, sessionToken: string, myPlayerID: string, spriteSheet: SpriteSheetInfo, socket: Socket, players: Player[], emitMovement: (location: UserLocation) => void } }
   | { action: 'addPlayer'; player: Player }
   | { action: 'playerMoved'; player: Player }
   | { action: 'playerDisconnect'; player: Player }
@@ -45,6 +45,7 @@ function defaultAppState(): CoveyAppState {
     nearbyPlayers: { nearbyPlayers: [] },
     players: [],
     myPlayerID: '',
+    currentTownHost: '',
     currentSpriteSheet: { spriteName: '', spritePNG: '' },
     currentTownFriendlyName: '',
     currentTownID: '',
@@ -64,6 +65,7 @@ function defaultAppState(): CoveyAppState {
 function appStateReducer(state: CoveyAppState, update: CoveyAppUpdate): CoveyAppState {
   const nextState = {
     sessionToken: state.sessionToken,
+    currentTownHost: state.currentTownHost,
     currentTownFriendlyName: state.currentTownFriendlyName,
     currentTownID: state.currentTownID,
     currentTownIsPubliclyListed: state.currentTownIsPubliclyListed,
@@ -169,6 +171,7 @@ async function GameController(initData: TownJoinResponse,
 
   const gamePlayerID = initData.coveyUserID;
   const sessionToken = initData.coveySessionToken;
+  const townHostUsername = initData.townHost;
   const url = process.env.REACT_APP_TOWNS_SERVICE_URL;
   assert(url);
   const video = Video.instance();
@@ -224,6 +227,7 @@ async function GameController(initData: TownJoinResponse,
     data: {
       sessionToken,
       userName: video.userName,
+      townHost: townHostUsername,
       spriteSheet: playerSpriteSheet,
       townFriendlyName: roomName,
       townID: video.coveyTownID,

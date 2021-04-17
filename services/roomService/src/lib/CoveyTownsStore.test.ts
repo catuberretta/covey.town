@@ -31,11 +31,12 @@ function mockCoveyListener(): CoveyTownListener {
 }
 
 function createTownForTesting(friendlyNameToUse?: string, isPublic = false) {
+  const userName = nanoid();
   const friendlyName =
     friendlyNameToUse !== undefined
       ? friendlyNameToUse
       : `${isPublic ? 'Public' : 'Private'}TestingTown=${nanoid()}`;
-  return CoveyTownsStore.getInstance().createTown(friendlyName, isPublic);
+  return CoveyTownsStore.getInstance().createTown(friendlyName, isPublic, userName);
 }
 
 describe('CoveyTownsStore', () => {
