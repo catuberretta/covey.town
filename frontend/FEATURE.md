@@ -20,7 +20,7 @@ when you create a town in the Login screen)
    you will have to disconnect and rejoin the room, where you will see your uploaded map listed with
    the map options.
 
-4. As a Covey.Town user, you can view and mass update the towns of which you're a host of Navigate
+4. As a Covey.Town user, you can view and mass update the towns of which you're a host of. Navigate
    to the 'My Towns' tab on the right hand sidebar. You will see a list of your created towns. If
    you have created zero towns, you will see a message that says so. To change multiple (or just
    one) town's maps, hit the plus button next to the town. You will see the town's id added to list

@@ -38,7 +38,7 @@ const PlayerProfile: React.FunctionComponent = () => {
 
   const {isOpen, onOpen, onClose} = useDisclosure()
   const video = useMaybeVideo()
-  const {apiClient, userName, currentTownID, myPlayerID, sessionToken } = useCoveyAppState();
+  const {apiClient, userName, currentTownID, myPlayerID } = useCoveyAppState();
   const [newAvatar, setNewAvatar] = useState(defaultAvatar);
 
   const openSettings = useCallback(()=>{
@@ -57,7 +57,7 @@ const PlayerProfile: React.FunctionComponent = () => {
       try {
           await apiClient.updateSprite({
             coveyTownID: currentTownID,
-            playerID: sessionToken,
+            playerID: myPlayerID,
             newSprite: newAvatar,
           });
           toast({
